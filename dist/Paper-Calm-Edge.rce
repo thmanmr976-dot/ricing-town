@@ -1,0 +1,595 @@
+{
+  "format": "ricing-town",
+  "version": 8,
+  "name": "Paper Calm Edge",
+  "canvas": {
+    "width": 1440,
+    "height": 900,
+    "background": "#eee9df",
+    "desktop": {
+      "mode": "solid",
+      "gradientEnd": "#d7cfc0",
+      "angle": 0,
+      "image": "",
+      "fit": "cover",
+      "position": "center",
+      "showText": false,
+      "text": "",
+      "textColor": "#34312d"
+    },
+    "activeMonitorId": "primary"
+  },
+  "monitors": [
+    {
+      "id": "primary",
+      "name": "Primary display",
+      "output": "",
+      "width": 1440,
+      "height": 900,
+      "mode": "preferred",
+      "position": "auto",
+      "scale": 1,
+      "primary": true
+    }
+  ],
+  "elements": [
+    {
+      "id": "9f1fc5a6-bb18-483d-b372-f3d9dc5e1a80",
+      "type": "text",
+      "x": 430,
+      "y": 150,
+      "name": "Editorial date",
+      "width": 820,
+      "height": 160,
+      "fill": "#eee9df",
+      "color": "#3e3a34",
+      "radius": 0,
+      "fontSize": 54,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "{{value}}",
+        "dataSource": "date",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0,
+        "blur": 0,
+        "shadow": 0,
+        "borderWidth": 0,
+        "borderColor": "#8b5e3c",
+        "font": "serif",
+        "fontAsset": ""
+      },
+      "workspaceContent": [
+        "{{value}}",
+        "TODAY’S TASKS",
+        "IDEAS IN MOTION",
+        "WEEKLY RESET",
+        "QUIET REVIEW"
+      ],
+      "workspaceMotion": {
+        "order": 0
+      }
+    },
+    {
+      "id": "fa041e75-befa-4fd2-a7e3-414eb6cbdde7",
+      "type": "shape",
+      "x": 430,
+      "y": 330,
+      "name": "Rule",
+      "width": 680,
+      "height": 4,
+      "fill": "#8b5e3c",
+      "color": "#8b5e3c",
+      "radius": 2,
+      "fontSize": 24,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "workspaceContent": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "workspaceMotion": {
+        "order": 1
+      }
+    },
+    {
+      "id": "8c3f3f7c-8d5b-4bbd-8819-4c667df6911f",
+      "type": "text",
+      "x": 430,
+      "y": 365,
+      "name": "Daily note",
+      "width": 640,
+      "height": 120,
+      "fill": "#eee9df",
+      "color": "#6f665b",
+      "radius": 0,
+      "fontSize": 22,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "Make room for quiet work.\nOne window at a time.",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0,
+        "blur": 0,
+        "shadow": 0,
+        "borderWidth": 0,
+        "borderColor": "#8b5e3c",
+        "font": "serif",
+        "fontAsset": ""
+      },
+      "workspaceContent": [
+        "Make room for quiet work.\nOne window at a time.",
+        "01  Review the inbox\n02  Draft the project outline\n03  Take a 20-minute focus sprint\n04  Plan tomorrow’s first step",
+        "Capture one useful thought.\nLeave the rest for later.",
+        "Clear the desk.\nChoose the next three priorities.",
+        "Notice what worked.\nAdjust one thing for tomorrow."
+      ],
+      "workspaceMotion": {
+        "order": 2
+      }
+    },
+    {
+      "id": "b737ae49-5200-4272-b555-f72c5a890a3f",
+      "type": "bar",
+      "x": 18,
+      "y": 90,
+      "name": "Paper edge rail",
+      "width": 300,
+      "height": 720,
+      "fill": "#e2dbcf",
+      "color": "#3e3a34",
+      "radius": 16,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "hot-edge",
+        "edge": "left",
+        "triggerSize": 5,
+        "hideDelay": 420
+      },
+      "options": {
+        "padding": 24,
+        "gap": 20,
+        "iconSize": 18,
+        "align": "start",
+        "orientation": "vertical",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "anchorX": "left",
+      "anchorY": "center",
+      "appearance": {
+        "opacity": 0.96,
+        "blur": 10,
+        "shadow": 26,
+        "borderWidth": 1,
+        "borderColor": "#c8bfae",
+        "font": "serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "4f1ab48f-69f0-4c70-a617-bc18ed66c303",
+      "type": "clock",
+      "x": 25,
+      "y": 30,
+      "name": "Clock",
+      "width": 250,
+      "height": 90,
+      "fill": "#e2dbcf",
+      "color": "#8b5e3c",
+      "radius": 18,
+      "fontSize": 34,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    },
+    {
+      "id": "76793f0b-76be-46cd-bf5e-8ba58400f739",
+      "type": "workspaces",
+      "x": 25,
+      "y": 145,
+      "name": "Workspaces",
+      "width": 250,
+      "height": 48,
+      "fill": "#e2dbcf",
+      "color": "#3e3a34",
+      "radius": 10,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    },
+    {
+      "id": "44b4fde8-8eed-47c9-927a-e8a20b71ee12",
+      "type": "cpu",
+      "x": 25,
+      "y": 235,
+      "name": "CPU",
+      "width": 250,
+      "height": 54,
+      "fill": "#d7cfc0",
+      "color": "#3e3a34",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    },
+    {
+      "id": "ff109e88-6296-470c-9c9f-8c72b5f2fe8e",
+      "type": "memory",
+      "x": 25,
+      "y": 305,
+      "name": "Memory",
+      "width": 250,
+      "height": 54,
+      "fill": "#d7cfc0",
+      "color": "#3e3a34",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    },
+    {
+      "id": "1a4c9f28-dde1-4460-84b9-5d355476dfdc",
+      "type": "battery",
+      "x": 25,
+      "y": 375,
+      "name": "Battery",
+      "width": 250,
+      "height": 54,
+      "fill": "#d7cfc0",
+      "color": "#3e3a34",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    },
+    {
+      "id": "4fdf923a-6ed4-4039-ab98-0b838fae0265",
+      "type": "power",
+      "x": 25,
+      "y": 610,
+      "name": "Power",
+      "width": 250,
+      "height": 54,
+      "fill": "#8b5e3c",
+      "color": "#fffaf0",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "b737ae49-5200-4272-b555-f72c5a890a3f"
+    }
+  ],
+  "assets": [],
+  "assetPacks": [],
+  "extensions": {},
+  "runtime": {
+    "audioTarget": "default",
+    "mediaPlayer": "auto",
+    "monitor": "auto"
+  },
+  "hyprland": {
+    "gapsIn": 12,
+    "gapsOut": 22,
+    "borderSize": 1,
+    "activeBorder": "#8b5e3c",
+    "inactiveBorder": "#c8bfae",
+    "rounding": 8,
+    "blurEnabled": false,
+    "blurSize": 8,
+    "blurPasses": 2,
+    "shadowEnabled": true,
+    "shadowRange": 8,
+    "shadowColor": "#000000",
+    "activeOpacity": 1,
+    "inactiveOpacity": 0.97,
+    "layout": "dwindle",
+    "animations": true,
+    "animationSpeed": 5,
+    "animationStyle": "fade",
+    "monitor": "preferred, auto, 1",
+    "keyboardLayout": "us",
+    "followMouse": 1,
+    "naturalScroll": false
+  },
+  "integrations": {
+    "shell": "quickshell",
+    "terminal": "kitty",
+    "launcher": "rofi",
+    "notifications": "swaync",
+    "lockscreen": "hyprlock",
+    "gtk": true,
+    "qt": true,
+    "iconTheme": "Papirus-Dark",
+    "cursorTheme": "Bibata-Modern-Ice"
+  },
+  "automation": {
+    "keybindings": [],
+    "windowRules": [],
+    "workspaceRules": []
+  }
+}

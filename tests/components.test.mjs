@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {fresh,element,validate,parse,serialize} from '../dist/model.js';
+import {attach,box,family,cloneFamily,calendarCells,simulation} from '../dist/components.js';
+test('attach/detach preserves absolute position and parent movement carries children',()=>{const p=fresh(),bar=p.elements[0],child=p.elements[1],start=box(p,child);attach(p,child,bar.id);assert.equal(box(p,child).x,start.x);bar.x+=100;assert.equal(box(p,child).x,start.x+100);attach(p,child,null);assert.equal(child.x,start.x+100);});
+test('copy Bar remaps children IDs and preserves relative coordinates regardless of layer order',()=>{const p=fresh(),bar=p.elements[0],child=p.elements[1];attach(p,child,bar.id);p.elements.reverse();const copies=cloneFamily(family(p,bar.id));assert.equal(copies[1].parentId,copies[0].id);assert.notEqual(copies[0].id,bar.id);assert.equal(copies[1].x,child.x);});
+test('new components round trip and reject dangling parent or invalid actions',()=>{const p=fresh(),v=element('volume');p.elements.push(v);v.parentId=p.elements[0].id;assert.deepEqual(parse(serialize(p)),p);v.parentId='missing';assert.throws(()=>validate(p));v.parentId=null;v.behavior={click:'exec'};assert.throws(()=>validate(p));});
+test('calendar handles leap years and Monday aligned weeks',()=>{assert.equal(calendarCells(2024,1).filter(Boolean).length,29);assert.equal(calendarCells(2025,1).filter(Boolean).length,28);assert.equal(calendarCells(2026,8)[0],null);assert.equal(calendarCells(2026,8)[1],1);});
+test('preview state is isolated from project and resettable',()=>{const e=element('volume'),before=serialize({...fresh(),elements:[e]}),s=simulation();s.get(e).volume=10;s.get(e).muted=true;assert.equal(serialize({...JSON.parse(before),elements:[e]}),before);s.reset();assert.equal(s.get(e).volume,65);});

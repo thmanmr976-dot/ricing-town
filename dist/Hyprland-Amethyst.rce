@@ -1,0 +1,212 @@
+{
+  "format": "ricing-town",
+  "version": 1,
+  "name": "Hyprland Amethyst",
+  "canvas": {
+    "width": 1440,
+    "height": 900,
+    "background": "#111820"
+  },
+  "elements": [
+    {
+      "id": "8192e482-6b54-4d47-aab8-8beefe433927",
+      "type": "bar",
+      "x": 24,
+      "y": 24,
+      "name": "Bar",
+      "width": 1392,
+      "height": 64,
+      "fill": "#181825",
+      "color": "#cdd5e8",
+      "radius": 20,
+      "fontSize": 16,
+      "format": "24h",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      }
+    },
+    {
+      "id": "5e4ac097-004f-4a45-9636-e16ab75508fb",
+      "type": "workspaces",
+      "x": 16,
+      "y": 12,
+      "name": "Workspaces",
+      "width": 240,
+      "height": 40,
+      "fill": "#202532",
+      "color": "#cdd5e8",
+      "radius": 10,
+      "fontSize": 16,
+      "format": "24h",
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "parentId": "8192e482-6b54-4d47-aab8-8beefe433927",
+      "behavior": {
+        "click": "activate",
+        "scroll": "none",
+        "workspaceCount": 5,
+        "volumeStep": 5,
+        "activeColor": "#cba6f7",
+        "mutedColor": "#ddaaa3"
+      }
+    },
+    {
+      "id": "5cc12524-22d0-4a3d-963d-0e25229f9552",
+      "type": "clock",
+      "x": 570,
+      "y": 12,
+      "name": "Clock",
+      "width": 252,
+      "height": 40,
+      "fill": "#242a38",
+      "color": "#cba6f7",
+      "radius": 18,
+      "fontSize": 16,
+      "format": "24h",
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": true,
+        "icon": "",
+        "items": []
+      },
+      "parentId": "8192e482-6b54-4d47-aab8-8beefe433927"
+    },
+    {
+      "id": "5347a250-20b5-4ca4-b8cc-295ee9a85baa",
+      "type": "volume",
+      "x": 1246,
+      "y": 12,
+      "name": "Volume",
+      "width": 130,
+      "height": 40,
+      "fill": "#202532",
+      "color": "#89dceb",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "parentId": "8192e482-6b54-4d47-aab8-8beefe433927"
+    },
+    {
+      "id": "c0035eab-3894-423a-ae2b-49ff29e18321",
+      "type": "bar",
+      "x": 390,
+      "y": 796,
+      "name": "App Dock",
+      "width": 660,
+      "height": 72,
+      "fill": "#181825",
+      "color": "#cdd5e8",
+      "radius": 24,
+      "fontSize": 16,
+      "format": "24h",
+      "options": {
+        "padding": 16,
+        "gap": 20,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": [
+          {
+            "id": "00d5e110-168c-4083-b972-4bb9b7e41612",
+            "icon": "⌘",
+            "label": "Terminal",
+            "action": "kitty",
+            "shortcut": "Super+Return"
+          },
+          {
+            "id": "dedcd60e-e6fe-46d1-80ea-3803db910784",
+            "icon": "🌐",
+            "label": "Browser",
+            "action": "firefox",
+            "shortcut": "Super+B"
+          },
+          {
+            "id": "9dd4800e-ea44-40f9-9b15-5c8ee7e5838a",
+            "icon": "▣",
+            "label": "Files",
+            "action": "thunar",
+            "shortcut": "Super+E"
+          },
+          {
+            "id": "2150a376-6076-4392-a4ae-63490da73d02",
+            "icon": "♪",
+            "label": "Music",
+            "action": "",
+            "shortcut": ""
+          },
+          {
+            "id": "5e7c5c21-5456-477f-b3c6-6c669ed5d0c7",
+            "icon": "⚙",
+            "label": "Settings",
+            "action": "",
+            "shortcut": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "bbcf90dc-525e-434b-bac6-dca93d22fb94",
+      "type": "clock",
+      "x": 470,
+      "y": 300,
+      "name": "Clock",
+      "width": 500,
+      "height": 160,
+      "fill": "#11151f",
+      "color": "#cba6f7",
+      "radius": 32,
+      "fontSize": 96,
+      "format": "24h",
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "parentId": null
+    }
+  ],
+  "assets": [],
+  "extensions": {}
+}

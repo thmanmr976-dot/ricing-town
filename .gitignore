@@ -1,0 +1,18 @@
+# Local runtime output and browser evidence
+session/
+verification/
+*.log
+
+# Generated distribution archives and temporary exports
+*.zip
+work/
+
+# Local/editor secrets and package caches
+.env
+.env.*
+node_modules/
+__pycache__/
+*.pyc
+
+# Keep the source project snapshots, but omit the duplicated wallpaper backup.
+staged/current-with-live-wallpaper-backup.rce

@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+import {readFile,writeFile,mkdir,chmod} from 'node:fs/promises';
+import {spawn,spawnSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
+import {basename,dirname,join,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {parse} from './dist/model.js';
+import {buildFullRiceFiles} from './dist/hyprland.js';
+
+const projectRoot=dirname(fileURLToPath(import.meta.url));
+globalThis.fetch=async path=>{try{return {ok:true,text:()=>readFile(join(projectRoot,'dist',String(path)),'utf8')}}catch{return {ok:false,text:async()=>''}}};
+
+function chooseFile(){
+  for(const [command,args] of [['zenity',['--file-selection','--title=Open a Ricing Town project','--file-filter=Ricing Town projects | *.rce']],['kdialog',['--getopenfilename',process.env.HOME||'.','Ricing Town projects (*.rce)']]]){
+    const found=spawnSync('sh',['-c',`command -v ${command}`],{encoding:'utf8'});
+    if(found.status===0){const result=spawnSync(command,args,{encoding:'utf8'});if(result.status===0&&result.stdout.trim())return result.stdout.trim();}
+  }
+  return '';
+}
+
+async function writeBundle(files,target){
+  for(const [name,data] of Object.entries(files)){
+    if(name.startsWith('/')||name.split('/').includes('..'))throw Error('Unsafe generated path');
+    const destination=join(target,name);await mkdir(dirname(destination),{recursive:true});await writeFile(destination,data);
+    if(name.endsWith('.sh')||name==='manager.py')await chmod(destination,0o700);
+  }
+}
+
+async function main(){
+  const selected=process.argv[2]||chooseFile();if(!selected)throw Error('Choose a .rce file or pass its path to Ricing Town Manager.');
+  const file=resolve(selected);if(!file.toLowerCase().endsWith('.rce'))throw Error('Ricing Town Manager only opens .rce projects.');
+  const project=parse(await readFile(file,'utf8'));
+  const safeName=(basename(file,'.rce').replace(/[^a-z0-9_-]/gi,'-')||'rice').slice(0,80);
+  const target=join(process.env.XDG_RUNTIME_DIR||tmpdir(),`ricing-town-${safeName}-${process.pid}`);
+  await mkdir(target,{recursive:true});await writeBundle(await buildFullRiceFiles(project),target);
+  console.log(`Validated ${project.name}. Opening Ricing Town Manager.`);
+  const child=spawn('python3',[join(target,'manager.py')],{cwd:target,stdio:'inherit'});child.on('exit',code=>process.exitCode=code||0);
+}
+main().catch(error=>{console.error(`Ricing Town Manager: ${error.message}`);process.exitCode=1;});

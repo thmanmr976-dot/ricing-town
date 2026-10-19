@@ -1,0 +1,1008 @@
+{
+  "format": "ricing-town",
+  "version": 8,
+  "name": "Nexus Dualscape",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "background": "#080b16",
+    "activeMonitorId": "primary",
+    "desktop": {
+      "mode": "gradient",
+      "gradientEnd": "#20113d",
+      "angle": 142,
+      "image": "",
+      "fit": "cover",
+      "position": "center",
+      "showText": true,
+      "text": "NEXUS\nDUALSCAPE",
+      "textColor": "#5a4b82"
+    }
+  },
+  "monitors": [
+    {
+      "id": "primary",
+      "name": "Primary · Laptop",
+      "output": "eDP-1",
+      "width": 1920,
+      "height": 1080,
+      "mode": "preferred",
+      "position": "0x0",
+      "scale": 1,
+      "primary": true
+    },
+    {
+      "id": "studio",
+      "name": "Studio · External",
+      "output": "DP-1",
+      "width": 2560,
+      "height": 1440,
+      "mode": "2560x1440@144",
+      "position": "1920x0",
+      "scale": 1,
+      "primary": false
+    }
+  ],
+  "elements": [
+    {
+      "id": "33f25cad-474e-4bc6-83fd-80e1e770a57c",
+      "type": "bar",
+      "x": 24,
+      "y": 22,
+      "name": "Nexus command bar",
+      "width": 1872,
+      "height": 58,
+      "fill": "#151426",
+      "color": "#e8def8",
+      "radius": 18,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 12,
+        "gap": 15,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "appearance": {
+        "opacity": 0.78,
+        "blur": 16,
+        "shadow": 24,
+        "borderWidth": 1,
+        "borderColor": "#6c5b8c",
+        "font": "sans-serif",
+        "fontAsset": ""
+      },
+      "anchorX": "stretch",
+      "anchorY": "top"
+    },
+    {
+      "id": "5b8035dc-f838-4313-b935-e637b3651271",
+      "type": "workspaces",
+      "x": 20,
+      "y": 9,
+      "name": "Orbit workspaces",
+      "width": 270,
+      "height": 40,
+      "fill": "#151426",
+      "color": "#e8def8",
+      "radius": 12,
+      "fontSize": 14,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 7,
+        "gap": 7,
+        "iconSize": 18,
+        "align": "start",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "33f25cad-474e-4bc6-83fd-80e1e770a57c",
+      "behavior": {
+        "workspaceCount": 6,
+        "activeColor": "#cba6f7"
+      }
+    },
+    {
+      "id": "324e73d0-658f-408c-b79a-d7539aca34ea",
+      "type": "network",
+      "x": 1160,
+      "y": 9,
+      "name": "Network",
+      "width": 125,
+      "height": 40,
+      "fill": "#151426",
+      "color": "#e8def8",
+      "radius": 12,
+      "fontSize": 14,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 7,
+        "gap": 7,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "33f25cad-474e-4bc6-83fd-80e1e770a57c"
+    },
+    {
+      "id": "f2a2ac94-4207-4d04-b261-4178dcdb591c",
+      "type": "bluetooth",
+      "x": 1295,
+      "y": 9,
+      "name": "Bluetooth",
+      "width": 120,
+      "height": 40,
+      "fill": "#151426",
+      "color": "#e8def8",
+      "radius": 12,
+      "fontSize": 14,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 7,
+        "gap": 7,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "33f25cad-474e-4bc6-83fd-80e1e770a57c"
+    },
+    {
+      "id": "95f9ee31-3261-461b-9914-ae74ab16c577",
+      "type": "battery",
+      "x": 1425,
+      "y": 9,
+      "name": "Battery",
+      "width": 110,
+      "height": 40,
+      "fill": "#151426",
+      "color": "#e8def8",
+      "radius": 12,
+      "fontSize": 14,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 7,
+        "gap": 7,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "33f25cad-474e-4bc6-83fd-80e1e770a57c"
+    },
+    {
+      "id": "bce1a5d3-614b-4c05-a19e-47db425c1357",
+      "type": "clock",
+      "x": 1545,
+      "y": 9,
+      "name": "Nexus clock",
+      "width": 280,
+      "height": 40,
+      "fill": "#151426",
+      "color": "#89dceb",
+      "radius": 12,
+      "fontSize": 17,
+      "format": "24h",
+      "monitorId": "all",
+      "options": {
+        "padding": 7,
+        "gap": 7,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": true,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "33f25cad-474e-4bc6-83fd-80e1e770a57c"
+    },
+    {
+      "id": "5ab49f94-ae51-4be5-926a-1ce5852c893e",
+      "type": "dock",
+      "x": 610,
+      "y": 962,
+      "name": "Nexus app dock",
+      "width": 700,
+      "height": 82,
+      "fill": "#121221",
+      "color": "#f5eaff",
+      "radius": 26,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "primary",
+      "options": {
+        "padding": 15,
+        "gap": 22,
+        "iconSize": 22,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": [
+          {
+            "id": "app-terminal",
+            "icon": "⌘",
+            "label": "Terminal",
+            "action": "",
+            "shortcut": "SUPER + RETURN",
+            "actionId": "terminal"
+          },
+          {
+            "id": "app-browser",
+            "icon": "◎",
+            "label": "Web",
+            "action": "",
+            "shortcut": "SUPER + B",
+            "actionId": "browser"
+          },
+          {
+            "id": "app-files",
+            "icon": "▣",
+            "label": "Files",
+            "action": "",
+            "shortcut": "",
+            "actionId": "files"
+          },
+          {
+            "id": "app-music",
+            "icon": "♫",
+            "label": "Music",
+            "action": "",
+            "shortcut": "",
+            "actionId": "music"
+          },
+          {
+            "id": "app-lock",
+            "icon": "◇",
+            "label": "Lock",
+            "action": "",
+            "shortcut": "SUPER + L",
+            "actionId": "lock"
+          }
+        ]
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "appearance": {
+        "opacity": 0.82,
+        "blur": 20,
+        "shadow": 32,
+        "borderWidth": 1,
+        "borderColor": "#51456d",
+        "font": "sans-serif",
+        "fontAsset": ""
+      },
+      "anchorX": "center",
+      "anchorY": "bottom"
+    },
+    {
+      "id": "98caae8c-7f26-4036-ab62-bf22f949be1a",
+      "type": "widget",
+      "x": 92,
+      "y": 150,
+      "name": "Temporal greeting",
+      "width": 520,
+      "height": 210,
+      "fill": "#141326",
+      "color": "#f0e7ff",
+      "radius": 28,
+      "fontSize": 39,
+      "format": "24h",
+      "monitorId": "primary",
+      "options": {
+        "padding": 28,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "start",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": [],
+        "svgAsset": "nexus-mark"
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "slide",
+        "duration": 900,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "GOOD EVENING\n{{time}}",
+        "dataSource": "time",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0.42,
+        "blur": 12,
+        "shadow": 18,
+        "borderWidth": 1,
+        "borderColor": "#3d3556",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "aa69595a-110b-4486-90e5-9e3aa4aab908",
+      "type": "widget",
+      "x": 1460,
+      "y": 820,
+      "name": "Adaptive power capsule",
+      "width": 330,
+      "height": 112,
+      "fill": "#17162b",
+      "color": "#a6e3a1",
+      "radius": 40,
+      "fontSize": 20,
+      "format": "24h",
+      "monitorId": "primary",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [
+        {
+          "id": "battery-low",
+          "enabled": true,
+          "source": "battery",
+          "operator": "lt",
+          "value": 20,
+          "style": {
+            "fill": "#5a1826",
+            "color": "#ffb4bd",
+            "opacity": 0.96,
+            "text": "LOW POWER · {{value}}",
+            "animation": "pulse"
+          }
+        },
+        {
+          "id": "battery-charge",
+          "enabled": true,
+          "source": "charging",
+          "operator": "eq",
+          "value": true,
+          "style": {
+            "fill": "#12382f",
+            "color": "#94f7d2",
+            "opacity": 0.92,
+            "text": "CHARGING · {{value}}",
+            "animation": "glow"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "float",
+        "duration": 2800,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "POWER  {{value}}",
+        "dataSource": "battery",
+        "shape": "pill"
+      },
+      "appearance": {
+        "opacity": 0.8,
+        "blur": 18,
+        "shadow": 24,
+        "borderWidth": 1,
+        "borderColor": "#5d4d78",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "3d6cfedc-4ba5-4d6f-b1b5-ff23ff15e6ca",
+      "type": "widget",
+      "x": 92,
+      "y": 760,
+      "name": "Now playing glass",
+      "width": 560,
+      "height": 160,
+      "fill": "#161226",
+      "color": "#f5c2e7",
+      "radius": 30,
+      "fontSize": 23,
+      "format": "24h",
+      "monitorId": "primary",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [
+        {
+          "id": "music-paused",
+          "enabled": true,
+          "source": "musicPlaying",
+          "operator": "eq",
+          "value": false,
+          "style": {
+            "fill": "#151522",
+            "color": "#7f849c",
+            "opacity": 0.55,
+            "text": "MUSIC PAUSED",
+            "animation": "none"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "glow",
+        "duration": 3200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "NOW PLAYING\n♫  {{value}}",
+        "dataSource": "music",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0.6,
+        "blur": 22,
+        "shadow": 24,
+        "borderWidth": 1,
+        "borderColor": "#564370",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "446cbdf7-88a8-4fd9-9295-50de90a769e4",
+      "type": "widget",
+      "x": 100,
+      "y": 170,
+      "name": "Studio telemetry",
+      "width": 680,
+      "height": 330,
+      "fill": "#0d1b2a",
+      "color": "#d6efff",
+      "radius": 34,
+      "fontSize": 24,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 26,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "start",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "STUDIO TELEMETRY",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0.7,
+        "blur": 18,
+        "shadow": 28,
+        "borderWidth": 1,
+        "borderColor": "#3a6680",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "73a87fb6-4556-44a0-8193-2c368fe47bf9",
+      "type": "text",
+      "x": 26,
+      "y": 105,
+      "name": "CPU telemetry",
+      "width": 190,
+      "height": 160,
+      "fill": "#142a46",
+      "color": "#89dceb",
+      "radius": 24,
+      "fontSize": 18,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [
+        {
+          "id": "cpu-hot",
+          "enabled": true,
+          "source": "cpu",
+          "operator": "gt",
+          "value": 80,
+          "style": {
+            "fill": "#5a1826",
+            "color": "#ffb4bd",
+            "opacity": 1,
+            "text": "CPU ALERT\n{{value}}",
+            "animation": "glow"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "pulse",
+        "duration": 2600,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "CPU\n{{value}}",
+        "dataSource": "cpu",
+        "shape": "rectangle"
+      },
+      "parentId": "446cbdf7-88a8-4fd9-9295-50de90a769e4"
+    },
+    {
+      "id": "def4ac24-17c9-4eb2-b48e-4c6d38fdd20d",
+      "type": "text",
+      "x": 238,
+      "y": 105,
+      "name": "MEMORY telemetry",
+      "width": 190,
+      "height": 160,
+      "fill": "#2c2043",
+      "color": "#cba6f7",
+      "radius": 24,
+      "fontSize": 18,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [
+        {
+          "id": "ram-high",
+          "enabled": true,
+          "source": "memory",
+          "operator": "gt",
+          "value": 80,
+          "style": {
+            "fill": "#4b2b12",
+            "color": "#ffd8a8",
+            "opacity": 1,
+            "text": "RAM HIGH\n{{value}}",
+            "animation": "pulse"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "pulse",
+        "duration": 2600,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "MEMORY\n{{value}}",
+        "dataSource": "memory",
+        "shape": "rectangle"
+      },
+      "parentId": "446cbdf7-88a8-4fd9-9295-50de90a769e4"
+    },
+    {
+      "id": "2d06ac7b-ab7b-497d-960a-e887e2fb75ce",
+      "type": "text",
+      "x": 450,
+      "y": 105,
+      "name": "BATTERY telemetry",
+      "width": 190,
+      "height": 160,
+      "fill": "#15342e",
+      "color": "#a6e3a1",
+      "radius": 24,
+      "fontSize": 18,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "pulse",
+        "duration": 2600,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "BATTERY\n{{value}}",
+        "dataSource": "battery",
+        "shape": "rectangle"
+      },
+      "parentId": "446cbdf7-88a8-4fd9-9295-50de90a769e4"
+    },
+    {
+      "id": "0f27a996-4f8b-4d4b-af07-60adcb8ff18e",
+      "type": "text",
+      "x": 980,
+      "y": 235,
+      "name": "Studio date",
+      "width": 1050,
+      "height": 170,
+      "fill": "#080b16",
+      "color": "#cba6f7",
+      "radius": 0,
+      "fontSize": 58,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "start",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "{{value}}",
+        "dataSource": "date",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0,
+        "blur": 0,
+        "shadow": 0,
+        "borderWidth": 0,
+        "borderColor": "#cba6f7",
+        "font": "serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "85692834-6514-44e9-9c40-b4fbae3db0da",
+      "type": "text",
+      "x": 980,
+      "y": 470,
+      "name": "Connection state",
+      "width": 300,
+      "height": 72,
+      "fill": "#12303a",
+      "color": "#89dceb",
+      "radius": 36,
+      "fontSize": 18,
+      "format": "24h",
+      "monitorId": "studio",
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [
+        {
+          "id": "offline",
+          "enabled": true,
+          "source": "network",
+          "operator": "eq",
+          "value": false,
+          "style": {
+            "fill": "#4b1820",
+            "color": "#ffb4bd",
+            "opacity": 1,
+            "text": "OFFLINE",
+            "animation": "pulse"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "pulse",
+        "duration": 1900,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "⌁  {{value}}",
+        "dataSource": "network",
+        "shape": "pill"
+      },
+      "appearance": {
+        "opacity": 0.86,
+        "blur": 12,
+        "shadow": 24,
+        "borderWidth": 1,
+        "borderColor": "#285c68",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "nexus-mark",
+      "name": "Nexus mark.svg",
+      "extension": "svg",
+      "data": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><path fill=\"#cba6f7\" d=\"M32 2 58 17v30L32 62 6 47V17zm0 9L14 21v22l18 10 18-10V21z\"/><circle cx=\"32\" cy=\"32\" r=\"8\" fill=\"#89dceb\"/></svg>"
+    }
+  ],
+  "assetPacks": [],
+  "extensions": {},
+  "runtime": {
+    "audioTarget": "default",
+    "mediaPlayer": "auto",
+    "monitor": "auto"
+  },
+  "hyprland": {
+    "gapsIn": 7,
+    "gapsOut": 14,
+    "borderSize": 2,
+    "activeBorder": "#cba6f7",
+    "inactiveBorder": "#24243a",
+    "rounding": 18,
+    "blurEnabled": true,
+    "blurSize": 12,
+    "blurPasses": 3,
+    "shadowEnabled": true,
+    "shadowRange": 24,
+    "shadowColor": "#000000",
+    "activeOpacity": 0.98,
+    "inactiveOpacity": 0.9,
+    "layout": "dwindle",
+    "animations": true,
+    "animationSpeed": 6,
+    "animationStyle": "slide",
+    "monitor": "preferred, auto, 1",
+    "keyboardLayout": "us",
+    "followMouse": 1,
+    "naturalScroll": false
+  },
+  "integrations": {
+    "shell": "hybrid",
+    "terminal": "kitty",
+    "launcher": "rofi",
+    "notifications": "swaync",
+    "lockscreen": "hyprlock",
+    "gtk": true,
+    "qt": true,
+    "iconTheme": "Papirus-Dark",
+    "cursorTheme": "Bibata-Modern-Ice"
+  },
+  "automation": {
+    "keybindings": [
+      {
+        "id": "bind-terminal",
+        "keys": "SUPER + RETURN",
+        "actionId": "terminal"
+      },
+      {
+        "id": "bind-browser",
+        "keys": "SUPER + B",
+        "actionId": "browser"
+      },
+      {
+        "id": "bind-settings",
+        "keys": "SUPER + S",
+        "actionId": "settings"
+      },
+      {
+        "id": "bind-lock",
+        "keys": "SUPER + L",
+        "actionId": "lock"
+      }
+    ],
+    "windowRules": [
+      {
+        "id": "float-volume",
+        "class": "pavucontrol",
+        "float": true,
+        "center": true,
+        "workspace": ""
+      },
+      {
+        "id": "browser-workspace",
+        "class": "firefox",
+        "float": false,
+        "center": false,
+        "workspace": "2"
+      }
+    ],
+    "workspaceRules": [
+      {
+        "id": "primary-workspace",
+        "workspace": "1",
+        "monitor": "eDP-1",
+        "persistent": true
+      },
+      {
+        "id": "studio-workspace",
+        "workspace": "2",
+        "monitor": "DP-1",
+        "persistent": true
+      }
+    ]
+  }
+}
