@@ -993,6 +993,263 @@ body.right-collapsed #right-panel .panel-heading {
  margin-top: var(--space-4);
 }
 
+/* === Inventory Reclassification & Progressive Disclosure UI === */
+[hidden] {
+ display: none !important;
+}
+
+.brand-home-btn {
+ cursor: pointer;
+ border: 1px solid transparent !important;
+ background: transparent !important;
+ padding: 4px 8px !important;
+ border-radius: var(--radius-md);
+}
+
+.brand-home-btn:hover {
+ background: var(--bg-surface) !important;
+ border-color: var(--border-subtle) !important;
+}
+
+/* Left Panel Tabs (Components | Layers) */
+.left-tabs-heading {
+ padding: 6px var(--space-2) !important;
+ gap: var(--space-2);
+}
+
+.left-panel-tabs {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 4px;
+ flex: 1;
+ background: var(--bg-base);
+ padding: 3px;
+ border-radius: var(--radius-md);
+ border: 1px solid var(--border-subtle);
+}
+
+.panel-tab {
+ padding: 5px 8px !important;
+ font-size: var(--font-xs) !important;
+ font-weight: 600;
+ border: 0 !important;
+ background: transparent !important;
+ color: var(--text-secondary) !important;
+ border-radius: var(--radius-sm) !important;
+ text-align: center;
+}
+
+.panel-tab:hover {
+ color: var(--text-primary) !important;
+}
+
+.panel-tab.active {
+ background: var(--bg-elevated) !important;
+ color: var(--text-primary) !important;
+ box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+}
+
+.left-tab-pane {
+ display: flex;
+ flex-direction: column;
+ min-height: 0;
+}
+
+.widget-studio-inline-row {
+ padding: var(--space-2) var(--space-3) 0;
+}
+
+.add-widget-studio-btn {
+ width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 6px;
+ padding: 8px 10px !important;
+ font-size: var(--font-sm) !important;
+ font-weight: 600;
+ color: var(--text-primary) !important;
+ background: var(--accent-subtle) !important;
+ border: 1px dashed var(--accent) !important;
+ border-radius: var(--radius-md);
+}
+
+.add-widget-studio-btn:hover {
+ background: rgba(168, 85, 247, 0.24) !important;
+}
+
+body.left-collapsed .left-panel-tabs,
+body.left-collapsed .widget-studio-inline-row {
+ display: none !important;
+}
+
+/* Bottom Toolbar Snap Pill & Conditional Alignment Tools */
+.snap-pill {
+ display: inline-flex;
+ align-items: center;
+ gap: 5px;
+ padding: 5px 9px;
+ border-radius: var(--radius-sm);
+ font-size: var(--font-xs);
+ color: var(--text-secondary);
+ cursor: pointer;
+ user-select: none;
+ border: 1px solid transparent;
+}
+
+.snap-pill:hover {
+ color: var(--text-primary);
+ background: var(--bg-elevated);
+}
+
+.snap-pill input[type="checkbox"] {
+ margin: 0 !important;
+ width: 13px !important;
+ height: 13px !important;
+ accent-color: var(--accent);
+}
+
+.align-tools-group {
+ display: inline-flex;
+ align-items: center;
+ gap: 3px;
+}
+
+/* Theme Presets Grid at Top of Desktop Settings */
+.theme-presets-grid {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 6px;
+}
+
+.theme-preset-btn {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 6px;
+ padding: 7px 10px !important;
+ font-size: var(--font-xs) !important;
+ font-weight: 600;
+ background: var(--bg-surface) !important;
+ border: 1px solid var(--border-subtle) !important;
+}
+
+.theme-preset-btn:hover {
+ border-color: var(--accent) !important;
+ background: var(--accent-subtle) !important;
+}
+
+/* Collapsible Advanced Drawer inside Right Panel */
+.advanced-props-wrapper {
+ margin: var(--space-3);
+ border: 1px solid var(--border-strong);
+ border-radius: var(--radius-md);
+ background: rgba(14, 15, 20, 0.55);
+ overflow: hidden;
+}
+
+.advanced-props-toggle {
+ width: 100%;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: 10px var(--space-3) !important;
+ background: rgba(168, 85, 247, 0.08) !important;
+ border: 0 !important;
+ border-radius: 0 !important;
+ color: var(--text-primary) !important;
+ font-size: var(--font-sm) !important;
+ font-weight: 600;
+ text-align: start;
+}
+
+.advanced-props-toggle:hover {
+ background: rgba(168, 85, 247, 0.16) !important;
+}
+
+.advanced-props-container {
+ border-top: 1px solid var(--border-subtle);
+}
+
+/* Advanced Menu Sub-group in Top Bar File Dropdown */
+.advanced-menu-group {
+ margin-top: 2px;
+}
+
+.advanced-menu-summary {
+ list-style: none;
+ cursor: pointer;
+ padding: 7px 10px;
+ border-radius: var(--radius-sm);
+ font-size: var(--font-sm);
+ color: var(--text-secondary);
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ user-select: none;
+}
+
+.advanced-menu-summary::-webkit-details-marker {
+ display: none;
+}
+
+.advanced-menu-summary:hover {
+ background: var(--bg-elevated);
+ color: var(--text-primary);
+}
+
+.advanced-menu-body {
+ padding: 4px 4px 4px 10px;
+ border-inline-start: 2px solid var(--border-strong);
+ margin-inline-start: 8px;
+ display: flex;
+ flex-direction: column;
+ gap: 2px;
+}
+
+/* === Advanced Rice Designs (Start Screen) === */
+.start-section-hint {
+ margin: 0 0 var(--space-3);
+ color: var(--text-secondary);
+ font-size: var(--font-sm);
+ max-width: 72ch;
+}
+
+.advanced-design-card .template-card-thumb {
+ position: relative;
+}
+
+.design-tag {
+ position: absolute;
+ inset-block-start: 8px;
+ inset-inline-start: 8px;
+ padding: 2px 8px;
+ border-radius: 999px;
+ font-size: 10px;
+ font-weight: 650;
+ letter-spacing: .4px;
+ text-transform: uppercase;
+ color: var(--text-primary);
+ background: rgba(11, 12, 16, .72);
+ border: 1px solid var(--border-strong);
+ backdrop-filter: blur(6px);
+}
+
+.design-cta {
+ align-self: flex-start;
+ margin-top: 6px;
+ font-size: var(--font-xs);
+ font-weight: 600;
+ color: var(--accent);
+ opacity: .85;
+ transition: opacity var(--transition-fast);
+}
+
+.advanced-design-card:hover .design-cta,
+.advanced-design-card:focus-visible .design-cta {
+ opacity: 1;
+}
+
 @media (max-width: 1280px) {
  #editor-main {
   grid-template-columns: 228px minmax(260px, 1fr) 280px;

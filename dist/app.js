@@ -15,6 +15,7 @@ import {analyzeCompatibility} from './compatibility.js';
 import {exportHybrid} from './hybrid.js';
 import {resolvedStyle} from './logic.js';
 import {DESKTOP_PRESETS} from './presets.js';
+import {ADVANCED_PRESETS} from './advanced-presets.js';
 import {createNeighborhoodStudio,formatCustomValue,applyElementVisuals} from './neighborhood-studio.js';
 import {ANIMATION_KINDS,ANIMATION_LABELS,DATA_SOURCES,DATA_LABELS,LOGIC_SOURCES,BINDING_SOURCES,SOURCE_LABELS} from './widget-spec.js';
 const $=s=>document.querySelector(s),storage=new ProjectStorage(),sim=simulation();
@@ -160,28 +161,29 @@ function draw(){let scopedCss='';let customStyles=$('#rt-custom-styles');if(!cus
 }
 function layers(){$('#layers').replaceChildren();const addLayer=(e,child=false)=>{const b=button((child?'↳ ':'')+TYPE_META[e.type][0]+' '+e.name,event=>{if(!preview)select(e.id,event.shiftKey);});b.className='layer'+(selection.has(e.id)?' selected':'');$('#layers').append(b);};for(const e of [...project.elements].reverse().filter(e=>!e.parentId)){addLayer(e);for(const c of project.elements.filter(c=>c.parentId===e.id))addLayer(c,true);}$('#count').textContent=project.elements.length;}
 const sectionOpenState=new Map();
+let showAdvancedProps=false,customScreenSizeMode=false,currentAdvancedContainer=null;
 const DEFAULT_OPEN_SECTIONS=new Set(['Appearance','Layout','Widget Neighborhood content','Behavior & state','Local music','Audio spectrum','Desktop','Hyprland compositor','Color presets','Unlinked shortcuts']);
 function resetSectionByTitle(title){
  const e=current();
  commit(()=>{
   if(e){
    const def=element(e.type);
-   if(title===e.name||title.endsWith('layers selected')){Object.assign(e,{radius:def.radius,fontSize:def.fontSize,fill:def.fill,color:def.color});}
-   else if(title==='Appearance'){e.appearance=structuredClone(def.appearance);delete e.customCss;}
-   else if(title==='Layout'){const items=e.options?.items||[];e.options={...structuredClone(def.options),items};delete e.anchorX;delete e.anchorY;}
+   if(title===e.name||title.endsWith('layers selected')){Object.assign(e,{radius:def.radius,fontSize:def.fontSize,fill:def.fill,color:def.color});e.appearance={...appearance(e),opacity:def.appearance.opacity,borderWidth:def.appearance.borderWidth,borderColor:def.appearance.borderColor,font:def.appearance.font,fontAsset:''};e.options={...options(e),icon:def.options.icon};}
+   else if(title==='Appearance'||title==='Blur, shadow & custom CSS'){e.appearance=structuredClone(def.appearance);delete e.customCss;e.options={...options(e),svgAsset:''};}
+   else if(title==='Layout'||title==='Internal layout & container'){const items=e.options?.items||[];e.options={...structuredClone(def.options),items};delete e.anchorX;delete e.anchorY;}
    else if(title==='Reveal & overlay'){e.reveal={mode:'always',edge:'left',triggerSize:4,hideDelay:350};}
    else if(title==='Widget Neighborhood content'){e.custom=structuredClone(def.custom||{text:'Custom Widget',dataSource:'static',shape:'rectangle'});}
    else if(title==='Animation'){e.animation=structuredClone(def.animation);}
    else if(title==='Timeline & keyframes'){e.timeline={enabled:false,duration:2000,loop:true,keyframes:[]};}
    else if(title==='Visual data bindings'){e.signalBindings=[];}
    else if(title==='Workspace Content'){delete e.workspaceContent;delete e.workspaceLayout;delete e.workspaceMotion;e.workspaceOnly=0;e.workspaceHidden=0;}
-   else if(title==='Behavior & state'){e.behavior=structuredClone(def.behavior);}
+   else if(title==='Behavior & state'||title==='Click & scroll behavior'){e.behavior=structuredClone(def.behavior);}
    else if(title==='Display targeting'){e.monitorId='all';}
    else if(title==='Visual Logic'){e.logic=[];}
   }else{
    const def=fresh();
-   if(title==='Desktop'){project.canvas.background=def.canvas.background;project.canvas.desktop=structuredClone(def.canvas.desktop);}
-   else if(title==='Hyprland compositor'){const h=def.hyprland;project.hyprland={...project.hyprland,gapsIn:h.gapsIn,gapsOut:h.gapsOut,borderSize:h.borderSize,rounding:h.rounding,activeOpacity:h.activeOpacity,inactiveOpacity:h.inactiveOpacity,splitRatio:h.splitRatio,activeBorder:h.activeBorder,inactiveBorder:h.inactiveBorder,borderGradient:h.borderGradient,activeBorderEnd:h.activeBorderEnd,borderAngle:h.borderAngle,layout:h.layout,blurEnabled:h.blurEnabled,blurSize:h.blurSize,blurPasses:h.blurPasses,shadowEnabled:h.shadowEnabled,shadowRange:h.shadowRange,shadowColor:h.shadowColor,animations:h.animations,animationSpeed:h.animationSpeed,animationStyle:h.animationStyle};}
+   if(title==='Desktop'||title==='Desktop text & video'){project.canvas.background=def.canvas.background;project.canvas.desktop=structuredClone(def.canvas.desktop);}
+   else if(title==='Hyprland compositor'||title==='Window effects & preview'){const h=def.hyprland;project.hyprland={...project.hyprland,gapsIn:h.gapsIn,gapsOut:h.gapsOut,borderSize:h.borderSize,rounding:h.rounding,activeOpacity:h.activeOpacity,inactiveOpacity:h.inactiveOpacity,splitRatio:h.splitRatio,activeBorder:h.activeBorder,inactiveBorder:h.inactiveBorder,borderGradient:h.borderGradient,activeBorderEnd:h.activeBorderEnd,borderAngle:h.borderAngle,layout:h.layout,blurEnabled:h.blurEnabled,blurSize:h.blurSize,blurPasses:h.blurPasses,shadowEnabled:h.shadowEnabled,shadowRange:h.shadowRange,shadowColor:h.shadowColor,animations:h.animations,animationSpeed:h.animationSpeed,animationStyle:h.animationStyle};}
    else if(title==='Monitor & input'){const h=def.hyprland;project.hyprland={...project.hyprland,monitor:h.monitor,keyboardLayout:h.keyboardLayout,keyboardOptions:h.keyboardOptions,followMouse:h.followMouse,naturalScroll:h.naturalScroll};}
    else if(title==='Full rice integrations'){project.integrations=structuredClone(def.integrations);}
    else if(title==='Hyprland shortcuts'){project.automation.keybindings=structuredClone(def.automation.keybindings);}
@@ -191,12 +193,30 @@ function resetSectionByTitle(title){
  });
  notify(title+' reset to defaults.');
 }
+function beginAdvancedProperties(label='⚙ Advanced settings · متقدم'){
+ const wrap=node('div',undefined,'advanced-props-wrapper');
+ const btn=button('',()=>{
+  showAdvancedProps=!showAdvancedProps;
+  container.hidden=!showAdvancedProps;
+  btn.setAttribute('aria-expanded',String(showAdvancedProps));
+  btn.classList.toggle('open',showAdvancedProps);
+ },label);
+ btn.className='advanced-props-toggle'+(showAdvancedProps?' open':'');
+ btn.setAttribute('aria-expanded',String(showAdvancedProps));
+ btn.append(node('span',label),node('span','▾','cat-chevron'));
+ const container=node('div',undefined,'advanced-props-container');
+ container.hidden=!showAdvancedProps;
+ wrap.append(btn,container);
+ $('#properties').append(wrap);
+ currentAdvancedContainer=container;
+ return container;
+}
 function section(title){
- const s=node('section',undefined,'property-section');
+ const s=node('section',undefined,'property-section'+(currentAdvancedContainer?' is-advanced':''));
  const e=current();
  const isPrimaryLayerSection=e&&(title===e.name||title.endsWith('layers selected'));
  const hasActiveData=(title==='Reveal & overlay'&&e?.reveal?.mode==='hot-edge')||(title==='Applications & actions'&&['dock','launcher'].includes(e?.type));
- const defaultOpen=isPrimaryLayerSection||hasActiveData||DEFAULT_OPEN_SECTIONS.has(title);
+ const defaultOpen=!currentAdvancedContainer&&(isPrimaryLayerSection||hasActiveData||DEFAULT_OPEN_SECTIONS.has(title));
  const isOpen=sectionOpenState.has(title)?sectionOpenState.get(title):defaultOpen;
  const header=node('div',undefined,'property-section-header');
  const toggleBtn=button('',()=>{
@@ -217,10 +237,10 @@ function section(title){
  const body=node('div',undefined,'property-section-body');
  body.hidden=!isOpen;
  s.append(header,body);
- $('#properties').append(s);
+ (currentAdvancedContainer||$('#properties')).append(s);
  return body;
 }
-function field(parent,label,value,change,{type='text',min,max,step=1,choices,maxLength=120}={}){const wrap=node('label',label);const input=node(choices?'select':type==='textarea'?'textarea':'input');input.setAttribute('aria-label',label);if(choices){for(const entry of choices){const [v,t]=Array.isArray(entry)?entry:[entry,entry];const opt=node('option',t);opt.value=v;input.append(opt);}}else if(type!=='textarea'){input.type=type;input.maxLength=maxLength;if(min!==undefined)input.min=min;if(max!==undefined)input.max=max;input.step=step;}else input.maxLength=maxLength;if(type==='checkbox')input.checked=value;else input.value=value;
+function field(parent,label,value,change,{type='text',min,max,step=1,choices,maxLength=120,hidden=false}={}){const wrap=node('label',label);if(hidden)wrap.hidden=true;const input=node(choices?'select':type==='textarea'?'textarea':'input');input.setAttribute('aria-label',label);if(choices){for(const entry of choices){const [v,t]=Array.isArray(entry)?entry:[entry,entry];const opt=node('option',t);opt.value=v;input.append(opt);}}else if(type!=='textarea'){input.type=type;input.maxLength=maxLength;if(min!==undefined)input.min=min;if(max!==undefined)input.max=max;input.step=step;}else input.maxLength=maxLength;if(type==='checkbox')input.checked=value;else input.value=value;
  const apply=()=>{const v=type==='checkbox'?input.checked:type==='number'||type==='range'?Number(input.value):input.value;if((type==='number'||type==='range')&&(!Number.isFinite(v)||input.value===''||v<min||v>max))return false;change(v);pending=true;draw();layers();autosave();return true;};
  if(type==='color'){
   const group=node('span',undefined,'color-hex-group');
@@ -235,44 +255,219 @@ function field(parent,label,value,change,{type='text',min,max,step=1,choices,max
  if(choices||type==='checkbox'||type==='file'){input.onchange=()=>{if(apply()){checkpoint();properties();}};}else{input.oninput=apply;input.onchange=()=>{if(apply())checkpoint();};input.onblur=()=>{if(pending)checkpoint();};}wrap.append(input);parent.append(wrap);return input;}
 function updateElement(id,key,value){const e=project.elements.find(n=>n.id===id);if(e)e[key]=value;}
 function properties(){
- $('#properties').replaceChildren();const e=current();if(!e){desktopProperties();return;}const s=section(selection.size>1?`${selection.size} layers selected`:e.name),grid=node('div',undefined,'fields');s.append(grid);
- field(grid,'Layer name',e.name,v=>updateElement(e.id,'name',v));for(const [key,title,min,max] of [['x','X',0,10000],['y','Y',0,10000],['width','Width',20,10000],['height','Height',20,10000],['radius','Radius',0,500],['fontSize','Font size',8,200]])field(grid,title,e[key],v=>{updateElement(e.id,key,v);constrain(project,e);if(isContainer(e))for(const c of project.elements.filter(n=>n.parentId===e.id))constrain(project,c);},{type:'number',min:e.type==='shape'&&['width','height'].includes(key)?2:min,max});
+ currentAdvancedContainer=null;
+ $('#properties').replaceChildren();const e=current();if(!e){desktopProperties();return;}
+ const o=options(e),a=appearance(e),b=behavior(e);
+ // --- BASIC ELEMENT SETTINGS (أساسي — 10 core groups) ---
+ const s=section(selection.size>1?`${selection.size} layers selected`:e.name),grid=node('div',undefined,'fields');s.append(grid);
+ // 1. Name & 2. Position/Size & 3. Shape/Font
+ field(grid,'Layer name',e.name,v=>updateElement(e.id,'name',v));
+ for(const [key,title,min,max] of [['x','X',0,10000],['y','Y',0,10000],['width','Width',20,10000],['height','Height',20,10000],['radius','Radius',0,500],['fontSize','Font size',8,200]])field(grid,title,e[key],v=>{updateElement(e.id,key,v);constrain(project,e);if(isContainer(e))for(const c of project.elements.filter(n=>n.parentId===e.id))constrain(project,c);},{type:'number',min:e.type==='shape'&&['width','height'].includes(key)?2:min,max});
  for(const [k,t] of [['fill','Fill'],['color','Text color']])field(grid,t,e[k],v=>updateElement(e.id,k,v),{type:'color'});
+ field(grid,'Font',a.fontAsset||a.font,v=>{e.appearance={...appearance(e),fontAsset:project.assets?.some(n=>n.id===v&&['ttf','otf'].includes(n.extension))?v:'',font:project.assets?.some(n=>n.id===v&&['ttf','otf'].includes(n.extension))?'sans-serif':v};},{choices:[['sans-serif','System sans'],['serif','System serif'],['monospace','Monospace'],...(project.assets||[]).filter(n=>['ttf','otf'].includes(n.extension)).map(n=>[n.id,n.name])]});
+ // 4. Opacity & Border
+ for(const [k,t,min,max,step] of [['opacity','Background opacity',0,1,.05],['borderWidth','Border width',0,20,1]])field(grid,t,a[k],v=>{e.appearance={...appearance(e),[k]:v};},{type:'number',min,max,step});
+ field(grid,'Border color',a.borderColor,v=>e.appearance={...appearance(e),borderColor:v},{type:'color'});
+ // 5. Icon
+ field(grid,'Icon',o.icon,v=>e.options={...options(e),icon:v},{choices:ICONS.map(i=>[i,i||'Default'])});
+ // 6. Widget content (for widget, text, shape)
+ if(['widget','text','shape'].includes(e.type)){
+  const c={text:'',dataSource:'static',shape:'rectangle',...e.custom},pageIndex=clamp(workspaceEditPage,1,Math.max(1,e.workspaceContent?.length||1))-1,pageText=Array.isArray(e.workspaceContent)?e.workspaceContent[pageIndex]??'':c.text,setc=(k,v)=>{e.custom={text:'',dataSource:'static',shape:'rectangle',...e.custom,[k]:v};},setText=v=>{if(Array.isArray(e.workspaceContent)){while(e.workspaceContent.length<=pageIndex)e.workspaceContent.push('');e.workspaceContent[pageIndex]=v;if(pageIndex===0)setc('text',v);}else setc('text',v);};
+  field(s,Array.isArray(e.workspaceContent)?`Text / template · Workspace ${pageIndex+1}`:'Text / template',pageText,setText,{maxLength:2000});
+  field(grid,'Data source',c.dataSource,v=>setc('dataSource',v),{choices:DATA_SOURCES.map(k=>[k,DATA_LABELS[k]||k])});
+  field(grid,'Shape',c.shape,v=>setc('shape',v),{choices:[['rectangle','Rectangle'],['circle','Circle'],['pill','Pill'],['diamond','Diamond']]});
+ }
+ // 7. Clock (for clock)
+ if(e.type==='clock'){
+  field(grid,'Time format',e.format,v=>e.format=v,{choices:['24h','12h']});
+  for(const [k,t] of [['showSeconds','Show seconds'],['showDate','Show date']])field(grid,t,o[k],v=>e.options={...options(e),[k]:v},{type:'checkbox'});
+ }
+ // 8. Workspaces (for workspaces)
+ if(e.type==='workspaces'){
+  field(grid,'Workspace count',b.workspaceCount,v=>e.behavior={...behavior(e),workspaceCount:Math.round(v)},{type:'number',min:1,max:10});
+  field(grid,'Active color',b.activeColor,v=>e.behavior={...behavior(e),activeColor:v},{type:'color'});
+ }
+ // 10. Basic Audio Spectrum (for visualizer)
+ if(e.type==='visualizer'){
+  const sp={style:'bars',bars:64,sensitivity:1.4,smoothing:.35,secondaryColor:e.color,mirror:false,direction:'center',range:'full',engine:'cava',autosens:true,noiseReduction:77,channels:'stereo',...e.spectrum},sets=(k,v)=>e.spectrum={...sp,...e.spectrum,[k]:v};
+  field(grid,'Bars',sp.bars,v=>sets('bars',Math.round(v)),{type:'number',min:4,max:96});
+  field(grid,'Wave style',sp.style,v=>sets('style',v),{choices:[['bars','Spectrum bars'],['waveform','Centered waveform']]});
+  field(grid,'Secondary color',sp.secondaryColor,v=>sets('secondaryColor',v),{type:'color'});
+  field(grid,'Sensitivity',sp.sensitivity,v=>sets('sensitivity',v),{type:'number',min:.1,max:5,step:.1});
+ }
  const openStudioBtn=button('⬡ Edit in Widget Studio',()=>studio?.open(e.id));openStudioBtn.className='open-studio-prop-btn';
- s.append(button('Duplicate',duplicate),button('Delete',remove),openStudioBtn);const o=options(e);
- const a=appearance(e),appearanceSection=section('Appearance'),ag=node('div',undefined,'fields');appearanceSection.append(ag);for(const [k,t,min,max,step] of [['opacity','Background opacity',0,1,.05],['blur','Backdrop blur',0,50,1],['shadow','Shadow',0,80,1],['borderWidth','Border width',0,20,1]])field(ag,t,a[k],v=>{e.appearance={...appearance(e),[k]:v};},{type:'number',min,max,step});field(ag,'Border color',a.borderColor,v=>e.appearance={...appearance(e),borderColor:v},{type:'color'});field(appearanceSection,'Font',a.fontAsset||a.font,v=>{e.appearance={...appearance(e),fontAsset:project.assets?.some(n=>n.id===v&&['ttf','otf'].includes(n.extension))?v:'',font:project.assets?.some(n=>n.id===v&&['ttf','otf'].includes(n.extension))?'sans-serif':v};},{choices:[['sans-serif','System sans'],['serif','System serif'],['monospace','Monospace'],...(project.assets||[]).filter(n=>['ttf','otf'].includes(n.extension)).map(n=>[n.id,n.name])]});appearanceSection.append(button('Upload font (.ttf / .otf)',()=>$('#font-file').click()),button('Upload safe SVG',()=>$('#svg-file').click()));field(appearanceSection,'SVG icon',o.svgAsset||'',v=>e.options={...options(e),svgAsset:v},{choices:[['','None'],...(project.assets||[]).filter(n=>n.extension==='svg').map(n=>[n.id,n.name])]});field(appearanceSection,'Scoped custom CSS',e.customCss?.source||'',v=>{const safe=sanitizeScopedCss(v,'#rt-'+e.id.replace(/[^a-z0-9-]/gi,''));e.customCss={source:v,scoped:safe.css,errors:safe.errors};},{maxLength:64000});if(e.customCss?.errors?.length)appearanceSection.append(node('p','CSS: '+e.customCss.errors.join(' · ')));
- const layout=section('Layout');for(const [k,t] of [['padding','Padding'],['gap','Item gap'],['iconSize','Icon size']])field(layout,t,o[k],v=>e.options={...options(e),[k]:v},{type:'number',min:k==='iconSize'?8:0,max:200});field(layout,'Alignment',o.align,v=>e.options={...options(e),align:v},{choices:['start','center','end','space-between']});field(layout,'Direction',o.orientation,v=>e.options={...options(e),orientation:v},{choices:['horizontal','vertical']});
- if(!isContainer(e))field(layout,'Container',e.parentId||'',id=>{attach(project,e,id);constrain(project,e);},{choices:[['','Desktop'],...project.elements.filter(isContainer).map(n=>[n.id,n.name])]});else layout.append(button('Arrange children in a row',()=>commit(()=>{if(autoLayout(project,e))notify('Some components need a wider container.');})));
- if(!e.parentId){field(layout,'Horizontal anchor',e.anchorX||'scale',v=>e.anchorX=v,{choices:['scale','left','center','right','stretch']});field(layout,'Vertical anchor',e.anchorY||'scale',v=>e.anchorY=v,{choices:['scale','top','center','bottom','stretch']});}
+ s.append(button('Duplicate',duplicate),button('Delete',remove),openStudioBtn);
+ // 9. Dock / Launcher applications (Basic when dock or launcher)
+ if(['dock','launcher'].includes(e.type))shortcutsProperties(e);
+
+ // --- ADVANCED ELEMENT SETTINGS (متقدم — 14 groups) ---
+ beginAdvancedProperties('⚙ Advanced element settings · متقدم');
+ // Adv 1, 2, 3: Blur, Shadow, SVG icon, Custom CSS
+ const appearanceSection=section('Appearance'),ag=node('div',undefined,'fields');appearanceSection.append(ag);
+ for(const [k,t,min,max,step] of [['blur','Backdrop blur',0,50,1],['shadow','Shadow',0,80,1]])field(ag,t,a[k],v=>{e.appearance={...appearance(e),[k]:v};},{type:'number',min,max,step});
+ appearanceSection.append(button('Upload font (.ttf / .otf)',()=>$('#font-file').click()),button('Upload safe SVG',()=>$('#svg-file').click()));
+ field(appearanceSection,'SVG icon',o.svgAsset||'',v=>e.options={...options(e),svgAsset:v},{choices:[['','None'],...(project.assets||[]).filter(n=>n.extension==='svg').map(n=>[n.id,n.name])]});
+ field(appearanceSection,'Scoped custom CSS',e.customCss?.source||'',v=>{const safe=sanitizeScopedCss(v,'#rt-'+e.id.replace(/[^a-z0-9-]/gi,''));e.customCss={source:v,scoped:safe.css,errors:safe.errors};},{maxLength:64000});
+ if(e.customCss?.errors?.length)appearanceSection.append(node('p','CSS: '+e.customCss.errors.join(' · ')));
+
+ // Adv 4 & 5: Internal layout & Container/Anchors
+ const layout=section('Layout');
+ for(const [k,t] of [['padding','Padding'],['gap','Item gap'],['iconSize','Icon size']])field(layout,t,o[k],v=>e.options={...options(e),[k]:v},{type:'number',min:k==='iconSize'?8:0,max:200});
+ field(layout,'Alignment',o.align,v=>e.options={...options(e),align:v},{choices:['start','center','end','space-between']});
+ field(layout,'Direction',o.orientation,v=>e.options={...options(e),orientation:v},{choices:['horizontal','vertical']});
+ if(!isContainer(e))field(layout,'Container',e.parentId||'',id=>{attach(project,e,id);constrain(project,e);},{choices:[['','Desktop'],...project.elements.filter(isContainer).map(n=>[n.id,n.name])]});
+ else layout.append(button('Arrange children in a row',()=>commit(()=>{if(autoLayout(project,e))notify('Some components need a wider container.');})));
+ if(!e.parentId){
+  field(layout,'Horizontal anchor',e.anchorX||'scale',v=>e.anchorX=v,{choices:['scale','left','center','right','stretch']});
+  field(layout,'Vertical anchor',e.anchorY||'scale',v=>e.anchorY=v,{choices:['scale','top','center','bottom','stretch']});
+ }
+ // Adv 6: Reveal & overlay
  if(!e.parentId){const reveal={mode:'always',edge:'left',triggerSize:4,hideDelay:350,...e.reveal},visibility=section('Reveal & overlay'),visibilityValue=reveal.mode==='always'?'always':reveal.edge+'-edge';field(visibility,'Visibility',visibilityValue,v=>e.reveal={...reveal,mode:v==='always'?'always':'hot-edge',edge:v==='right-edge'?'right':'left'},{choices:[['always','Always visible'],['left-edge','Reveal from left edge'],['right-edge','Reveal from right edge']]});if(reveal.mode==='hot-edge'){field(visibility,'Edge trigger width',reveal.triggerSize,v=>e.reveal={...reveal,triggerSize:v},{type:'number',min:1,max:24});field(visibility,'Hide delay (ms)',reveal.hideDelay,v=>e.reveal={...reveal,hideDelay:v},{type:'number',min:0,max:3000,step:50});visibility.append(node('p',`In Preview and Quickshell export this panel stays above applications and opens when the pointer reaches the far-${reveal.edge} edge.`));}}
- if(['widget','text','shape'].includes(e.type)){const c={text:'',dataSource:'static',shape:'rectangle',...e.custom},pageIndex=clamp(workspaceEditPage,1,Math.max(1,e.workspaceContent?.length||1))-1,pageText=Array.isArray(e.workspaceContent)?e.workspaceContent[pageIndex]??'':c.text,setc=(k,v)=>{e.custom={text:'',dataSource:'static',shape:'rectangle',...e.custom,[k]:v};},setText=v=>{if(Array.isArray(e.workspaceContent)){while(e.workspaceContent.length<=pageIndex)e.workspaceContent.push('');e.workspaceContent[pageIndex]=v;if(pageIndex===0)setc('text',v);}else setc('text',v);},custom=section('Widget Neighborhood content');field(custom,Array.isArray(e.workspaceContent)?`Text / template · Workspace ${pageIndex+1}`:'Text / template',pageText,setText,{maxLength:2000});field(custom,'Data source',c.dataSource,v=>setc('dataSource',v),{choices:DATA_SOURCES.map(k=>[k,DATA_LABELS[k]||k])});field(custom,'Shape',c.shape,v=>setc('shape',v),{choices:[['rectangle','Rectangle'],['circle','Circle'],['pill','Pill'],['diamond','Diamond']]});custom.append(node('p',Array.isArray(e.workspaceContent)?'This text belongs to the workspace selected below. Templates support {{value}}, {{number}}, {{time}} and {{date}}.':'Templates support {{value}}, {{number}}, {{time}} and {{date}}. Data remains marked as demo in browser preview.'));}
+ // Adv 7: Animation
  const animation={kind:'none',duration:1200,delay:0,easing:'ease-in-out',enabled:true,iteration:'infinite',...e.animation},seta=(k,v)=>e.animation={kind:'none',duration:1200,delay:0,easing:'ease-in-out',enabled:true,iteration:'infinite',...e.animation,[k]:v},animationSection=section('Animation');field(animationSection,'Enabled',animation.enabled,v=>seta('enabled',v),{type:'checkbox'});field(animationSection,'Effect',animation.kind,v=>seta('kind',v),{choices:ANIMATION_KINDS.map(k=>[k,ANIMATION_LABELS[k]||k])});field(animationSection,'Duration (ms)',animation.duration,v=>seta('duration',v),{type:'number',min:100,max:30000,step:50});field(animationSection,'Delay (ms)',animation.delay,v=>seta('delay',v),{type:'number',min:0,max:30000,step:50});field(animationSection,'Easing',animation.easing,v=>seta('easing',v),{choices:['linear','ease','ease-in','ease-out','ease-in-out']});field(animationSection,'Repeat',animation.iteration,v=>seta('iteration',v),{choices:[['once','Once'],['infinite','Loop']]});
+ // Adv 8: Timeline & keyframes
  const timeline={enabled:false,duration:2000,loop:true,keyframes:[],...e.timeline},sett=(k,v)=>e.timeline={...timeline,...e.timeline,[k]:v},timelineSection=section('Timeline & keyframes');field(timelineSection,'Timeline enabled',timeline.enabled,v=>sett('enabled',v),{type:'checkbox'});field(timelineSection,'Timeline duration (ms)',timeline.duration,v=>sett('duration',v),{type:'number',min:100,max:60000,step:50});field(timelineSection,'Loop timeline',timeline.loop,v=>sett('loop',v),{type:'checkbox'});timelineSection.append(button('+ Add keyframe',()=>commit(()=>{e.timeline={...timeline,...e.timeline};const frames=e.timeline.keyframes??=[];if(frames.length>=24)throw Error('Maximum 24 keyframes');const at=frames.length?Math.min(1,Math.max(0,(frames.at(-1).at||0)+.25)):0;frames.push({at,x:0,y:0,scale:1,rotation:0,opacity:1});e.timeline.keyframes=frames;})));for(const [index,frame] of (timeline.keyframes||[]).entries()){const card=node('div',undefined,'keyframe-card');card.append(node('strong','Keyframe '+(index+1)));field(card,'Time % #'+(index+1),Math.round(frame.at*100),v=>frame.at=v/100,{type:'number',min:0,max:100});field(card,'X offset #'+(index+1),frame.x,v=>frame.x=v,{type:'number',min:-10000,max:10000});field(card,'Y offset #'+(index+1),frame.y,v=>frame.y=v,{type:'number',min:-10000,max:10000});field(card,'Scale #'+(index+1),frame.scale,v=>frame.scale=v,{type:'number',min:.05,max:10,step:.05});field(card,'Rotation #'+(index+1),frame.rotation,v=>frame.rotation=v,{type:'number',min:-3600,max:3600});field(card,'Opacity #'+(index+1),frame.opacity,v=>frame.opacity=v,{type:'number',min:0,max:1,step:.05});card.append(button('Remove keyframe '+(index+1),()=>commit(()=>e.timeline.keyframes.splice(index,1))));timelineSection.append(card);}timelineSection.append(node('p','Keyframes interpolate position, scale, rotation and opacity in Preview and exported Quickshell.'));
+ // Adv 9: Visual data bindings
  const bindingSection=section('Visual data bindings');bindingSection.append(button('+ Add data binding',()=>commit(()=>{e.signalBindings??=[];if(e.signalBindings.length>=8)throw Error('Maximum 8 data bindings');e.signalBindings.push({id:crypto.randomUUID(),source:'spectrumBass',target:'scale',inputMin:0,inputMax:1,outputMin:1,outputMax:1.15,smoothing:.7});})));for(const [index,binding] of (e.signalBindings||[]).entries()){const card=node('div',undefined,'binding-card');field(card,'Binding source #'+(index+1),binding.source,v=>binding.source=v,{choices:BINDING_SOURCES.map(k=>[k,SOURCE_LABELS[k]||k])});field(card,'Binding target #'+(index+1),binding.target,v=>binding.target=v,{choices:[['opacity','Opacity'],['scale','Scale'],['rotation','Rotation'],['xOffset','X offset'],['yOffset','Y offset']]});for(const [key,label,min,max,step] of [['inputMin','Input min',-1000,1000,.01],['inputMax','Input max',-1000,1000,.01],['outputMin','Output min',-10000,10000,.01],['outputMax','Output max',-10000,10000,.01],['smoothing','Smoothing',0,.98,.05]])field(card,label+' #'+(index+1),binding[key],v=>binding[key]=v,{type:'number',min,max,step});card.append(button('Remove binding '+(index+1),()=>commit(()=>e.signalBindings.splice(index,1))));bindingSection.append(card);}bindingSection.append(node('p','Bindings map live system or FFT values to visual properties without commands.'));
+ // Adv 10 & 11: Workspace Content & Visibility
  const workspaceCount=Math.max(1,...project.elements.filter(n=>n.type==='workspaces').map(n=>behavior(n).workspaceCount)),workspaceSection=section('Workspace Content'),hasPages=Array.isArray(e.workspaceContent);field(workspaceSection,'Different content per workspace',hasPages,v=>{if(v){const base=['widget','text','shape'].includes(e.type)?e.custom?.text||'':'';e.workspaceContent=Array.from({length:workspaceCount},(_,i)=>i===0?base:'');e.workspaceLayout=Array.from({length:workspaceCount},()=>({x:e.x,align:options(e).align}));e.workspaceMotion={order:0};}else{delete e.workspaceContent;delete e.workspaceLayout;delete e.workspaceMotion;}},{type:'checkbox'});if(hasPages){workspaceEditPage=clamp(workspaceEditPage,1,workspaceCount);const pageSelect=node('select');pageSelect.setAttribute('aria-label','Editing workspace');for(let i=1;i<=workspaceCount;i++){const option=node('option','Workspace '+i);option.value=i;pageSelect.append(option);}pageSelect.value=workspaceEditPage;pageSelect.onchange=()=>{workspaceEditPage=Number(pageSelect.value);const ws=project.elements.find(n=>n.type==='workspaces');if(ws)sim.get(ws).active=workspaceEditPage;draw();properties();};const pageLabel=node('label','Editing workspace');pageLabel.append(pageSelect);workspaceSection.append(pageLabel);if(['widget','text','shape'].includes(e.type))field(workspaceSection,'Page content',e.workspaceContent[workspaceEditPage-1]??'',v=>{while(e.workspaceContent.length<workspaceCount)e.workspaceContent.push('');e.workspaceContent[workspaceEditPage-1]=v;},{type:'textarea',maxLength:2000});else workspaceSection.append(node('p','This component moves with the page but keeps its normal live value.'));e.workspaceLayout??=Array.from({length:workspaceCount},()=>({x:e.x,align:options(e).align}));while(e.workspaceLayout.length<workspaceCount)e.workspaceLayout.push({x:e.x,align:options(e).align});const pageLayout=e.workspaceLayout[workspaceEditPage-1]||{x:e.x,align:options(e).align};field(workspaceSection,'Page X position',pageLayout.x,v=>e.workspaceLayout[workspaceEditPage-1]={...e.workspaceLayout[workspaceEditPage-1],x:v},{type:'number',min:0,max:Math.max(0,project.canvas.width-e.width)});field(workspaceSection,'Page text alignment',pageLayout.align,v=>e.workspaceLayout[workspaceEditPage-1]={...e.workspaceLayout[workspaceEditPage-1],align:v},{choices:[['start','Left'],['center','Center'],['end','Right'],['space-between','Space between']]});field(workspaceSection,'Transition order',e.workspaceMotion?.order||0,v=>e.workspaceMotion={order:Math.round(v)},{type:'number',min:0,max:20});workspaceSection.append(node('p','Each workspace can keep its own horizontal position and text alignment. Lower order moves first. Changes are stored in the .rce project.'));}
  field(workspaceSection,'Visible on workspace',e.workspaceOnly||0,v=>e.workspaceOnly=Number(v),{choices:[[0,'All workspaces'],...Array.from({length:workspaceCount},(_,i)=>[i+1,'Workspace '+(i+1)+' only'])]});field(workspaceSection,'Hidden on workspace',e.workspaceHidden||0,v=>e.workspaceHidden=Number(v),{choices:[[0,'None'],...Array.from({length:workspaceCount},(_,i)=>[i+1,'Hide on Workspace '+(i+1)])]});if(!hasPages&&(e.workspaceOnly||e.workspaceHidden))field(workspaceSection,'Workspace transition order',e.workspaceMotion?.order||0,v=>e.workspaceMotion={order:Math.round(v)},{type:'number',min:0,max:20});
- const behaviorSection=section('Behavior & state');field(behaviorSection,'Icon',o.icon,v=>e.options={...options(e),icon:v},{choices:ICONS.map(i=>[i,i||'Default'])});
- if(e.type==='music'){const media=section('Local music');field(media,'Audio file',e.mediaAsset||'',v=>e.mediaAsset=v||undefined,{choices:[['','Use active MPRIS player'],...(project.assets||[]).filter(a=>['mp3','ogg','wav','flac','m4a'].includes(a.extension)).map(a=>[a.id,a.name])]});media.append(button('Upload local audio',()=>$('#audio-file').click()),node('p','The file is embedded in .rce. Native playback uses mpv when installed; controls and waves follow MPRIS through playerctl.'));}
- if(e.type==='visualizer'){const s={style:'bars',bars:64,sensitivity:1.4,smoothing:.35,secondaryColor:e.color,mirror:false,direction:'center',range:'full',engine:'cava',autosens:true,noiseReduction:77,channels:'stereo',...e.spectrum},sets=(k,v)=>e.spectrum={...s,...e.spectrum,[k]:v},audio=section('Audio spectrum');field(audio,'Audio engine',s.engine,v=>sets('engine',v),{choices:[['cava','CAVA · recommended'],['builtin','Built-in FFT fallback']]});const channelLayout=s.channels==='stereo'?'stereo':s.mirror?'mirrored':'mono';field(audio,'Channel layout',channelLayout,v=>{if(v==='stereo')e.spectrum={...s,...e.spectrum,channels:'stereo',mirror:false};else if(v==='mirrored')e.spectrum={...s,...e.spectrum,channels:'mono',mirror:true};else e.spectrum={...s,...e.spectrum,channels:'mono',mirror:false};},{choices:[['mirrored','Balanced mirrored mono'],['mono','Single mono spectrum'],['stereo','True stereo channels']]});field(audio,'CAVA auto sensitivity',s.autosens,v=>sets('autosens',v),{type:'checkbox'});field(audio,'CAVA noise reduction',s.noiseReduction,v=>sets('noiseReduction',Math.round(v)),{type:'number',min:0,max:100});field(audio,'Wave style',s.style,v=>sets('style',v),{choices:[['bars','Spectrum bars'],['waveform','Centered waveform']]});field(audio,'Bars',s.bars,v=>sets('bars',Math.round(v)),{type:'number',min:4,max:96});field(audio,'Spectrum width',e.width,v=>e.width=Math.round(v),{type:'number',min:120,max:10000});field(audio,'Spectrum height',e.height,v=>e.height=Math.round(v),{type:'number',min:20,max:10000});field(audio,'Hide on workspace',e.workspaceHidden??0,v=>e.workspaceHidden=Math.round(v),{choices:[[0,'Do not hide'],[1,'Workspace 1'],[2,'Workspace 2'],[3,'Workspace 3'],[4,'Workspace 4'],[5,'Workspace 5']]});field(audio,'Sensitivity',s.sensitivity,v=>sets('sensitivity',v),{type:'number',min:.1,max:5,step:.1});field(audio,'Smoothing',s.smoothing,v=>sets('smoothing',v),{type:'number',min:0,max:.98,step:.05});field(audio,'Secondary color',s.secondaryColor,v=>sets('secondaryColor',v),{type:'color'});field(audio,'Mirror',s.mirror,v=>sets('mirror',v),{type:'checkbox'});field(audio,'Direction',s.direction,v=>sets('direction',v),{choices:[['up','Up'],['down','Down'],['center','From center'],['left','Left'],['right','Right']]});field(audio,'Frequency range',s.range,v=>sets('range',v),{choices:[['full','Full spectrum'],['bass','Bass · 20–250 Hz'],['mid','Mid · 250–4000 Hz'],['treble','Treble · 4–20 kHz']]});audio.append(button('Apply compact balanced spectrum',()=>commit(()=>{e.spectrum={...s,style:'bars',bars:24,sensitivity:1,smoothing:.2,secondaryColor:'#dda58c',mirror:true,direction:'up',range:'full',engine:'cava',autosens:true,noiseReduction:65,channels:'mono'};e.fill='#2b2522';e.color='#8b5e3c';e.radius=12;e.width=600;e.height=68;e.x=Math.max(0,Math.round((project.canvas.width-e.width)/2));e.y=Math.max(0,project.canvas.height-e.height-20);e.workspaceHidden=3;e.options={...e.options,padding:6};e.appearance={...e.appearance,opacity:.82,borderWidth:2,borderColor:'#c8bfae'};})));audio.append(node('p','Balanced mirrored mono sends one averaged audio spectrum to both sides equally. Single mono uses the full width from low to high frequencies. True stereo keeps the left and right audio channels independent.'));audio.append(node('p','Preview uses sample bands unless the local helper is connected. Exported Quickshell uses CAVA with PipeWire when selected and falls back to the built-in FFT if CAVA is unavailable.'));}
- if(e.type==='clock'){field(behaviorSection,'Time format',e.format,v=>e.format=v,{choices:['24h','12h']});for(const [k,t] of [['showSeconds','Show seconds'],['showDate','Show date']])field(behaviorSection,t,o[k],v=>e.options={...options(e),[k]:v},{type:'checkbox'});}
- const b=behavior(e);if(!isContainer(e)){const choices=e.type==='clock'?[['calendar','Open calendar']]:e.type==='volume'?[['volume','Open volume panel'],['mute','Toggle mute']]:e.type==='workspaces'?[['activate','Activate workspace']]:[[e.type,'Open '+TYPES[e.type].name+' panel']];field(behaviorSection,'On click',b.click,v=>e.behavior={...behavior(e),click:v},{choices:[...choices,['none','No action']]});}
- if(e.type==='workspaces'){field(behaviorSection,'Workspace count',b.workspaceCount,v=>e.behavior={...behavior(e),workspaceCount:Math.round(v)},{type:'number',min:1,max:10});field(behaviorSection,'Active color',b.activeColor,v=>e.behavior={...behavior(e),activeColor:v},{type:'color'});}
+ // Adv 12: Click & Scroll behavior
+ const behaviorSection=section('Behavior & state');
+ if(!isContainer(e)){const choices=e.type==='clock'?[['calendar','Open calendar']]:e.type==='volume'?[['volume','Open volume panel'],['mute','Toggle mute']]:e.type==='workspaces'?[['activate','Activate workspace']]:[[e.type,'Open '+TYPES[e.type].name+' panel']];field(behaviorSection,'On click',b.click,v=>e.behavior={...behavior(e),click:v},{choices:[...choices,['none','No action']]});}
  if(e.type==='volume'){field(behaviorSection,'On scroll',b.scroll,v=>e.behavior={...behavior(e),scroll:v},{choices:[['volume','Change volume'],['none','No action']]});field(behaviorSection,'Scroll step',b.volumeStep,v=>e.behavior={...behavior(e),volumeStep:Math.round(v)},{type:'number',min:1,max:25});field(behaviorSection,'Muted color',b.mutedColor,v=>e.behavior={...behavior(e),mutedColor:v},{type:'color'});}
  behaviorSection.append(node('p','Preview states use sample data. Exported components read live data when their dependencies are installed.'));
- shortcutsProperties(e);
+ // Adv 13: Local music
+ if(e.type==='music'){const media=section('Local music');field(media,'Audio file',e.mediaAsset||'',v=>e.mediaAsset=v||undefined,{choices:[['','Use active MPRIS player'],...(project.assets||[]).filter(a=>['mp3','ogg','wav','flac','m4a'].includes(a.extension)).map(a=>[a.id,a.name])]});media.append(button('Upload local audio',()=>$('#audio-file').click()),node('p','The file is embedded in .rce. Native playback uses mpv when installed; controls and waves follow MPRIS through playerctl.'));}
+ // Adv 14: Audio engine (for visualizer; duplicate fields hidden in DOM)
+ if(e.type==='visualizer'){
+  const sp={style:'bars',bars:64,sensitivity:1.4,smoothing:.35,secondaryColor:e.color,mirror:false,direction:'center',range:'full',engine:'cava',autosens:true,noiseReduction:77,channels:'stereo',...e.spectrum},sets=(k,v)=>e.spectrum={...sp,...e.spectrum,[k]:v},audio=section('Audio spectrum');
+  field(audio,'Audio engine',sp.engine,v=>sets('engine',v),{choices:[['cava','CAVA · recommended'],['builtin','Built-in FFT fallback']]});
+  const channelLayout=sp.channels==='stereo'?'stereo':sp.mirror?'mirrored':'mono';
+  field(audio,'Channel layout',channelLayout,v=>{if(v==='stereo')e.spectrum={...sp,...e.spectrum,channels:'stereo',mirror:false};else if(v==='mirrored')e.spectrum={...sp,...e.spectrum,channels:'mono',mirror:true};else e.spectrum={...sp,...e.spectrum,channels:'mono',mirror:false};},{choices:[['mirrored','Balanced mirrored mono'],['mono','Single mono spectrum'],['stereo','True stereo channels']]});
+  field(audio,'CAVA auto sensitivity',sp.autosens,v=>sets('autosens',v),{type:'checkbox'});
+  field(audio,'CAVA noise reduction',sp.noiseReduction,v=>sets('noiseReduction',Math.round(v)),{type:'number',min:0,max:100});
+  field(audio,'Smoothing',sp.smoothing,v=>sets('smoothing',v),{type:'number',min:0,max:.98,step:.05});
+  field(audio,'Direction',sp.direction,v=>sets('direction',v),{choices:[['up','Up'],['down','Down'],['center','From center'],['left','Left'],['right','Right']]});
+  field(audio,'Frequency range',sp.range,v=>sets('range',v),{choices:[['full','Full spectrum'],['bass','Bass · 20–250 Hz'],['mid','Mid · 250–4000 Hz'],['treble','Treble · 4–20 kHz']]});
+  // Retained in code but hidden to prevent UI duplication with Width/Height/Workspace/Channel layout
+  field(audio,'Spectrum width',e.width,v=>e.width=Math.round(v),{type:'number',min:120,max:10000,hidden:true});
+  field(audio,'Spectrum height',e.height,v=>e.height=Math.round(v),{type:'number',min:20,max:10000,hidden:true});
+  field(audio,'Hide on workspace',e.workspaceHidden??0,v=>e.workspaceHidden=Math.round(v),{choices:[[0,'Do not hide'],[1,'Workspace 1'],[2,'Workspace 2'],[3,'Workspace 3'],[4,'Workspace 4'],[5,'Workspace 5']],hidden:true});
+  field(audio,'Mirror',sp.mirror,v=>sets('mirror',v),{type:'checkbox',hidden:true});
+  audio.append(button('Apply compact balanced spectrum',()=>commit(()=>{e.spectrum={...sp,style:'bars',bars:24,sensitivity:1,smoothing:.2,secondaryColor:'#dda58c',mirror:true,direction:'up',range:'full',engine:'cava',autosens:true,noiseReduction:65,channels:'mono'};e.fill='#2b2522';e.color='#8b5e3c';e.radius=12;e.width=600;e.height=68;e.x=Math.max(0,Math.round((project.canvas.width-e.width)/2));e.y=Math.max(0,project.canvas.height-e.height-20);e.workspaceHidden=3;e.options={...e.options,padding:6};e.appearance={...e.appearance,opacity:.82,borderWidth:2,borderColor:'#c8bfae'};})));
+ }
+ if(!['dock','launcher'].includes(e.type))shortcutsProperties(e);
 }
-function desktopProperties(){const s=section('Desktop'),d=desktop(project);const set=(k,v)=>project.canvas.desktop={...desktop(project),[k]:v};field(s,'Screen size',project.canvas.width+'x'+project.canvas.height,v=>{const [w,h]=v.split('x').map(Number);changeSize(project,w,h);fit();},{choices:[['1280x720','1280 × 720'],['1366x768','1366 × 768'],['1440x900','1440 × 900'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160'],[project.canvas.width+'x'+project.canvas.height,'Current size']]});for(const [k,t] of [['width','Screen width'],['height','Screen height']])field(s,t,project.canvas[k],v=>{changeSize(project,k==='width'?v:project.canvas.width,k==='height'?v:project.canvas.height);},{type:'number',min:100,max:10000});field(s,'Background',d.mode,v=>set('mode',v),{choices:[['solid','Solid color'],['gradient','Gradient'],['image','Static image'],['live','Live wallpaper · video']]});field(s,'Background color',project.canvas.background,v=>project.canvas.background=v,{type:'color'});field(s,'Gradient end',d.gradientEnd,v=>set('gradientEnd',v),{type:'color'});field(s,'Gradient angle',d.angle,v=>set('angle',v),{type:'number',min:0,max:360});s.append(button('Upload wallpaper',()=>$('#wallpaper-file').click()),button('Upload live wallpaper',()=>$('#live-wallpaper-file').click()));field(s,'Mute live wallpaper',d.videoMuted,v=>set('videoMuted',v),{type:'checkbox'});field(s,'Playback speed',d.videoRate,v=>set('videoRate',v),{type:'number',min:.25,max:2,step:.05});field(s,'Image fit',d.fit,v=>set('fit',v),{choices:['cover','contain','stretch']});field(s,'Image position',d.position,v=>set('position',v),{choices:['center','top','bottom','left','right']});field(s,'Show desktop text',d.showText,v=>set('showText',v),{type:'checkbox'});field(s,'Desktop text',d.text,v=>set('text',v),{maxLength:500});field(s,'Desktop text color',d.textColor,v=>set('textColor',v),{type:'color'});
- hyprlandProperties();const themes=section('Color presets');for(const [name,t] of Object.entries(THEMES))themes.append(button(name,()=>commit(()=>{project.canvas.background=t.background;project.hyprland={...project.hyprland,activeBorder:t.accent};for(const e of project.elements){e.fill=t.fill;e.color=t.color;e.behavior={...behavior(e),activeColor:t.accent};}})));themes.append(node('p','Applies to every component and the active Hyprland border. Undo restores your previous colors.'));
- const warnings=unresolved(project);if(warnings.length){const w=section('Unlinked shortcuts');for(const message of warnings)w.append(node('p','⚠ '+message));}const info=section('Project');info.append(node('p','Images and uploaded fonts travel inside .rce. Recovery keeps the original imported project.'));
+const PRESET_SCREEN_SIZES=['1280x720','1366x768','1440x900','1920x1080','2560x1440','3840x2160'];
+function desktopProperties(){
+ currentAdvancedContainer=null;
+ // --- BASIC DESKTOP & HYPRLAND SETTINGS (أساسي — 8 core groups) ---
+ // 1. Color presets at the VERY TOP of the panel
+ const themes=section('Color presets');
+ const themeRow=node('div',undefined,'theme-presets-grid');
+ for(const [name,t] of Object.entries(THEMES)){
+  const b=button(name,()=>commit(()=>{project.canvas.background=t.background;project.hyprland={...project.hyprland,activeBorder:t.accent};for(const e of project.elements){e.fill=t.fill;e.color=t.color;e.behavior={...behavior(e),activeColor:t.accent};}}));
+  themeRow.append(b);
+ }
+ themes.append(themeRow);
+
+ // 2, 3, 4, 5: Screen size, Background mode, and conditional Background colors / image
+ const s=section('Desktop'),d=desktop(project);
+ const set=(k,v)=>project.canvas.desktop={...desktop(project),[k]:v};
+ const currentSizeStr=project.canvas.width+'x'+project.canvas.height;
+ const isCustomSize=customScreenSizeMode||!PRESET_SCREEN_SIZES.includes(currentSizeStr);
+ field(s,'Screen size',isCustomSize?'custom':currentSizeStr,v=>{
+  if(v==='custom'){customScreenSizeMode=true;return;}
+  customScreenSizeMode=false;
+  const [w,h]=v.split('x').map(Number);changeSize(project,w,h);fit();
+ },{choices:[['1280x720','1280 × 720'],['1366x768','1366 × 768'],['1440x900','1440 × 900'],['1920x1080','1920 × 1080'],['2560x1440','2560 × 1440'],['3840x2160','3840 × 2160'],['custom',isCustomSize?`Custom (${project.canvas.width} × ${project.canvas.height})`:'Custom size…']]});
+ // Screen width & height: hidden unless Custom size is active
+ for(const [k,t] of [['width','Screen width'],['height','Screen height']])field(s,t,project.canvas[k],v=>{changeSize(project,k==='width'?v:project.canvas.width,k==='height'?v:project.canvas.height);},{type:'number',min:100,max:10000,hidden:!isCustomSize});
+ field(s,'Background',d.mode,v=>set('mode',v),{choices:[['solid','Solid color'],['gradient','Gradient'],['image','Static image'],['live','Live wallpaper · video']]});
+ // Background color (shown for solid & gradient)
+ field(s,'Background color',project.canvas.background,v=>project.canvas.background=v,{type:'color',hidden:d.mode==='image'||d.mode==='live'});
+ // Gradient fields (shown ONLY when Background === 'gradient')
+ field(s,'Gradient end',d.gradientEnd,v=>set('gradientEnd',v),{type:'color',hidden:d.mode!=='gradient'});
+ field(s,'Gradient angle',d.angle,v=>set('angle',v),{type:'number',min:0,max:360,hidden:d.mode!=='gradient'});
+ // Image fields (shown ONLY when Background === 'image')
+ const uploadWallBtn=button('Upload wallpaper',()=>$('#wallpaper-file').click());
+ uploadWallBtn.hidden=d.mode!=='image';
+ s.append(uploadWallBtn);
+ field(s,'Image fit',d.fit,v=>set('fit',v),{choices:['cover','contain','stretch'],hidden:d.mode!=='image'&&d.mode!=='live'});
+ field(s,'Image position',d.position,v=>set('position',v),{choices:['center','top','bottom','left','right'],hidden:d.mode!=='image'&&d.mode!=='live'});
+ // Live video fields when mode === 'live'
+ if(d.mode==='live'){
+  s.append(button('Upload live wallpaper',()=>$('#live-wallpaper-file').click()));
+  field(s,'Mute live wallpaper',d.videoMuted,v=>set('videoMuted',v),{type:'checkbox'});
+  field(s,'Playback speed',d.videoRate,v=>set('videoRate',v),{type:'number',min:.25,max:2,step:.05});
+ }
+
+ // 6, 7, 8: Hyprland Basic (Gaps & Rounding, Border Colors, Layout)
+ hyprlandProperties();
 }
-function hyprlandProperties(){const h=project.hyprland,set=(k,v)=>project.hyprland={...project.hyprland,[k]:v},s=section('Hyprland compositor'),g=node('div',undefined,'fields');field(s,'Preview tiled windows',!!h.windowPreview,v=>{set('windowPreview',v);if(v)triggerTilingAnimation();},{type:'checkbox'});const winCount=h.windowCount??3;field(g,'Preview windows',String(winCount),v=>{const next=Number(v);set('windowCount',next);if((h.focusedWindow??0)>=next)set('focusedWindow',0);},{choices:[['1','1 window'],['2','2 windows'],['3','3 windows'],['4','4 windows']]});field(g,'Focused window',String(Math.min(winCount-1,h.focusedWindow??0)),v=>set('focusedWindow',Number(v)),{choices:MOCK_WINDOWS.slice(0,winCount).map((w,i)=>[String(i),`${i+1} · ${w.app}`])});s.append(g);for(const [k,t,min,max,step] of [['gapsIn','Inner gaps',0,100,1],['gapsOut','Outer gaps',0,200,1],['borderSize','Border size',0,20,1],['rounding','Window rounding',0,100,1],['activeOpacity','Active opacity',.1,1,.05],['inactiveOpacity','Inactive opacity',.1,1,.05],['splitRatio','Split ratio',.3,.7,.02]])field(g,t,k==='splitRatio'?(h.splitRatio??.52):h[k],v=>set(k,v),{type:'number',min,max,step});field(g,'Active border',h.activeBorder,v=>set('activeBorder',v),{type:'color'});field(g,'Inactive border',h.inactiveBorder,v=>set('inactiveBorder',v),{type:'color'});field(s,'Gradient active border',!!h.borderGradient,v=>set('borderGradient',v),{type:'checkbox'});if(h.borderGradient){field(g,'Active border end',h.activeBorderEnd||'#bb9af7',v=>set('activeBorderEnd',v),{type:'color'});field(g,'Border angle (deg)',h.borderAngle??45,v=>set('borderAngle',v),{type:'number',min:0,max:360});}field(s,'Layout',h.layout,v=>set('layout',v),{choices:[['dwindle','Dwindle'],['master','Master'],['scrolling','Scrolling']]});field(s,'Blur windows',h.blurEnabled,v=>set('blurEnabled',v),{type:'checkbox'});field(g,'Blur size',h.blurSize,v=>set('blurSize',v),{type:'number',min:1,max:30});field(g,'Blur passes',h.blurPasses,v=>set('blurPasses',v),{type:'number',min:1,max:10});field(s,'Window shadows',h.shadowEnabled,v=>set('shadowEnabled',v),{type:'checkbox'});field(g,'Shadow range',h.shadowRange,v=>set('shadowRange',v),{type:'number',min:1,max:100});field(g,'Shadow color',h.shadowColor,v=>set('shadowColor',v),{type:'color'});field(s,'Animations',h.animations,v=>set('animations',v),{type:'checkbox'});field(g,'Animation speed',h.animationSpeed,v=>set('animationSpeed',v),{type:'number',min:.1,max:20,step:.1});field(g,'Animation style',h.animationStyle,v=>{set('animationStyle',v);triggerTilingAnimation();},{choices:['slide','popin','fade']});s.append(button('Replay window animation',()=>{if(!project.hyprland.windowPreview){commit(()=>project.hyprland={...project.hyprland,windowPreview:true});}triggerTilingAnimation();}));
+function hyprlandProperties(){
+ const h=project.hyprland,set=(k,v)=>project.hyprland={...project.hyprland,[k]:v},d=desktop(project);
+ const s=section('Hyprland compositor'),g=node('div',undefined,'fields');
+ s.append(g);
+ for(const [k,t,min,max,step] of [['gapsIn','Inner gaps',0,100,1],['gapsOut','Outer gaps',0,200,1],['borderSize','Border size',0,20,1],['rounding','Window rounding',0,100,1]])field(g,t,h[k],v=>set(k,v),{type:'number',min,max,step});
+ field(g,'Active border',h.activeBorder,v=>set('activeBorder',v),{type:'color'});
+ field(g,'Inactive border',h.inactiveBorder,v=>set('inactiveBorder',v),{type:'color'});
+ field(s,'Layout',h.layout,v=>set('layout',v),{choices:[['dwindle','Dwindle'],['master','Master'],['scrolling','Scrolling']]});
+
+ const warnings=unresolved(project);
+ if(warnings.length){const w=section('Unlinked shortcuts');for(const message of warnings)w.append(node('p','⚠ '+message));}
+
+ // --- ADVANCED DESKTOP & HYPRLAND SETTINGS (متقدم — 14 groups) ---
+ beginAdvancedProperties('⚙ Advanced desktop & Hyprland · متقدم');
+ // Adv 1 & 2: Desktop text & Live wallpaper
+ const deskAdv=section('Desktop text & video');
+ if(d.mode!=='live'){
+  deskAdv.append(button('Upload live wallpaper',()=>$('#live-wallpaper-file').click()));
+  field(deskAdv,'Mute live wallpaper',d.videoMuted,v=>project.canvas.desktop={...desktop(project),videoMuted:v},{type:'checkbox'});
+  field(deskAdv,'Playback speed',d.videoRate,v=>project.canvas.desktop={...desktop(project),videoRate:v},{type:'number',min:.25,max:2,step:.05});
+ }
+ field(deskAdv,'Show desktop text',d.showText,v=>project.canvas.desktop={...desktop(project),showText:v},{type:'checkbox'});
+ field(deskAdv,'Desktop text',d.text,v=>project.canvas.desktop={...desktop(project),text:v},{maxLength:500,hidden:!d.showText});
+ field(deskAdv,'Desktop text color',d.textColor,v=>project.canvas.desktop={...desktop(project),textColor:v},{type:'color',hidden:!d.showText});
+
+ // Adv 3-9: Window preview, Opacity, Split ratio, Gradient border, Blur, Shadows, Animations
+ const winAdv=section('Window effects & preview'),wg=node('div',undefined,'fields');
+ field(winAdv,'Preview tiled windows',!!h.windowPreview,v=>{set('windowPreview',v);if(v)triggerTilingAnimation();},{type:'checkbox'});
+ const winCount=h.windowCount??3;
+ field(wg,'Preview windows',String(winCount),v=>{const next=Number(v);set('windowCount',next);if((h.focusedWindow??0)>=next)set('focusedWindow',0);},{choices:[['1','1 window'],['2','2 windows'],['3','3 windows'],['4','4 windows']]});
+ field(wg,'Focused window',String(Math.min(winCount-1,h.focusedWindow??0)),v=>set('focusedWindow',Number(v)),{choices:MOCK_WINDOWS.slice(0,winCount).map((w,i)=>[String(i),`${i+1} · ${w.app}`])});
+ for(const [k,t,min,max,step] of [['activeOpacity','Active opacity',.1,1,.05],['inactiveOpacity','Inactive opacity',.1,1,.05],['splitRatio','Split ratio',.3,.7,.02]])field(wg,t,k==='splitRatio'?(h.splitRatio??.52):h[k],v=>set(k,v),{type:'number',min,max,step});
+ winAdv.append(wg);
+ field(winAdv,'Gradient active border',!!h.borderGradient,v=>set('borderGradient',v),{type:'checkbox'});
+ if(h.borderGradient){
+  field(wg,'Active border end',h.activeBorderEnd||'#bb9af7',v=>set('activeBorderEnd',v),{type:'color'});
+  field(wg,'Border angle (deg)',h.borderAngle??45,v=>set('borderAngle',v),{type:'number',min:0,max:360});
+ }
+ field(winAdv,'Blur windows',h.blurEnabled,v=>set('blurEnabled',v),{type:'checkbox'});
+ field(wg,'Blur size',h.blurSize,v=>set('blurSize',v),{type:'number',min:1,max:30,hidden:!h.blurEnabled});
+ field(wg,'Blur passes',h.blurPasses,v=>set('blurPasses',v),{type:'number',min:1,max:10,hidden:!h.blurEnabled});
+ field(winAdv,'Window shadows',h.shadowEnabled,v=>set('shadowEnabled',v),{type:'checkbox'});
+ field(wg,'Shadow range',h.shadowRange,v=>set('shadowRange',v),{type:'number',min:1,max:100,hidden:!h.shadowEnabled});
+ field(wg,'Shadow color',h.shadowColor,v=>set('shadowColor',v),{type:'color',hidden:!h.shadowEnabled});
+ field(winAdv,'Animations',h.animations,v=>set('animations',v),{type:'checkbox'});
+ field(wg,'Animation speed',h.animationSpeed,v=>set('animationSpeed',v),{type:'number',min:.1,max:20,step:.1,hidden:!h.animations});
+ field(wg,'Animation style',h.animationStyle,v=>{set('animationStyle',v);triggerTilingAnimation();},{choices:['slide','popin','fade'],hidden:!h.animations});
+ winAdv.append(button('Replay window animation',()=>{if(!project.hyprland.windowPreview){commit(()=>project.hyprland={...project.hyprland,windowPreview:true});}triggerTilingAnimation();}));
+
+ // Adv 10: Monitor & input
  const m=section('Monitor & input');field(m,'Monitor mode',h.monitor,v=>set('monitor',v),{maxLength:200});field(m,'Keyboard layout',h.keyboardLayout,v=>set('keyboardLayout',v),{maxLength:40});field(m,'Keyboard switching',h.keyboardOptions,v=>set('keyboardOptions',v),{choices:[['','Disabled'],['grp:alt_shift_toggle','Shift + Alt'],['grp:win_space_toggle','Super + Space'],['grp:ctrl_shift_toggle','Ctrl + Shift']]});field(m,'Focus follows mouse',h.followMouse,v=>set('followMouse',Number(v)),{choices:[[0,'Disabled'],[1,'Enabled'],[2,'Detached'],[3,'Loose']]});field(m,'Natural scrolling',h.naturalScroll,v=>set('naturalScroll',v),{type:'checkbox'});
- const i=project.integrations,x=section('Full rice integrations'),seti=(k,v)=>project.integrations={...project.integrations,[k]:v};field(x,'Panel technology',i.shell,v=>seti('shell',v),{choices:[['quickshell','Quickshell'],['waybar','Waybar']]});field(x,'Terminal theme',i.terminal,v=>seti('terminal',v),{choices:['kitty','foot','none']});field(x,'Application launcher',i.launcher,v=>seti('launcher',v),{choices:['rofi','wofi','none']});field(x,'Notifications',i.notifications,v=>seti('notifications',v),{choices:['swaync','none']});field(x,'Lock screen',i.lockscreen,v=>seti('lockscreen',v),{choices:['hyprlock','none']});field(x,'GTK color fragment',i.gtk,v=>seti('gtk',v),{type:'checkbox'});field(x,'Qt color fragment',i.qt,v=>seti('qt',v),{type:'checkbox'});field(x,'System icon theme',i.iconTheme,v=>seti('iconTheme',v),{maxLength:100});field(x,'System cursor theme',i.cursorTheme,v=>seti('cursorTheme',v),{maxLength:100});x.append(node('p','Theme names refer to packages installed on the target machine. The exporter never claims to bundle missing third-party themes.'));automationProperties();}
+ // Adv 11: Full rice integrations
+ const i=project.integrations,x=section('Full rice integrations'),seti=(k,v)=>project.integrations={...project.integrations,[k]:v};field(x,'Panel technology',i.shell,v=>seti('shell',v),{choices:[['quickshell','Quickshell'],['waybar','Waybar']]});field(x,'Terminal theme',i.terminal,v=>seti('terminal',v),{choices:['kitty','foot','none']});field(x,'Application launcher',i.launcher,v=>seti('launcher',v),{choices:['rofi','wofi','none']});field(x,'Notifications',i.notifications,v=>seti('notifications',v),{choices:['swaync','none']});field(x,'Lock screen',i.lockscreen,v=>seti('lockscreen',v),{choices:['hyprlock','none']});field(x,'GTK color fragment',i.gtk,v=>seti('gtk',v),{type:'checkbox'});field(x,'Qt color fragment',i.qt,v=>seti('qt',v),{type:'checkbox'});field(x,'System icon theme',i.iconTheme,v=>seti('iconTheme',v),{maxLength:100});field(x,'System cursor theme',i.cursorTheme,v=>seti('cursorTheme',v),{maxLength:100});x.append(node('p','Theme names refer to packages installed on the target machine. The exporter never claims to bundle missing third-party themes.'));
+ // Adv 12, 13, 14: Shortcuts, Window rules, Workspace rules
+ automationProperties();
+ const info=section('Project');info.append(node('p','Images and uploaded fonts travel inside .rce. Recovery keeps the original imported project.'));
+}
 function automationProperties(){const au=project.automation,bindings=section('Hyprland shortcuts');bindings.append(button('+ Add shortcut',()=>commit(()=>au.keybindings.push({id:crypto.randomUUID(),keys:'SUPER + RETURN',actionId:'terminal'}))));au.keybindings.forEach((b,index)=>{const card=node('div',undefined,'shortcut-card');field(card,'Keys',b.keys,v=>b.keys=v,{maxLength:80});field(card,'Action',b.actionId,v=>b.actionId=v,{choices:Object.entries(APPS).map(([id,a])=>[id,a.label])});card.append(button('Remove',()=>commit(()=>au.keybindings.splice(index,1))));bindings.append(card);});bindings.append(node('p','Actions come from the fixed application list; arbitrary commands are not accepted.'));
  const windows=section('Window rules');windows.append(button('+ Add window rule',()=>commit(()=>au.windowRules.push({id:crypto.randomUUID(),class:'firefox',float:true,center:false,workspace:''}))));au.windowRules.forEach((r,index)=>{const card=node('div',undefined,'shortcut-card');field(card,'App class (RE2)',r.class,v=>r.class=v,{maxLength:160});field(card,'Workspace',r.workspace,v=>r.workspace=v,{maxLength:80});field(card,'Floating',r.float,v=>r.float=v,{type:'checkbox'});field(card,'Centered',r.center,v=>r.center=v,{type:'checkbox'});card.append(button('Remove',()=>commit(()=>au.windowRules.splice(index,1))));windows.append(card);});
  const workspaces=section('Workspace rules');workspaces.append(button('+ Add workspace rule',()=>commit(()=>au.workspaceRules.push({id:crypto.randomUUID(),workspace:'1',monitor:'',persistent:true}))));au.workspaceRules.forEach((r,index)=>{const card=node('div',undefined,'shortcut-card');field(card,'Workspace',r.workspace,v=>r.workspace=v,{maxLength:80});field(card,'Monitor',r.monitor,v=>r.monitor=v,{maxLength:160});field(card,'Persistent',r.persistent,v=>r.persistent=v,{type:'checkbox'});card.append(button('Remove',()=>commit(()=>au.workspaceRules.splice(index,1))));workspaces.append(card);});}
 function shortcutsProperties(e){const s=section('Applications & actions');s.append(button('+ Add application',()=>commit(()=>{e.options={...options(e),items:[...options(e).items,{id:crypto.randomUUID(),label:'Terminal',icon:'⌘',action:'',shortcut:'',actionId:'terminal'}]};})));options(e).items.forEach((item,i)=>{const card=node('div',undefined,'shortcut-card');field(card,'Label '+(i+1),item.label,v=>item.label=v);field(card,'Icon '+(i+1),item.icon,v=>item.icon=v,{choices:[...new Set([...ICONS,item.icon])].map(i=>[i,i||'None'])});field(card,'Action '+(i+1),actionId(item),v=>{item.actionId=v;item.action='';},{choices:[['','Not linked'],...Object.entries(APPS).map(([k,a])=>[k,a.label])]});if(!actionId(item))card.append(node('p','⚠ Choose an action. This shortcut does nothing.'));if(item.shortcut)card.append(node('p','Saved desktop binding: '+item.shortcut+' (not installed by export)'));const actions=node('div',undefined,'item-actions');for(const [t,delta] of [['↑',-1],['↓',1],['Remove',0]]){const b=button(t,()=>commit(()=>{const items=[...options(e).items];items.splice(i,1);if(delta)items.splice(i+delta,0,item);e.options={...options(e),items};}));b.disabled=delta&&(i+delta<0||i+delta>=options(e).items.length);actions.append(b);}card.append(actions);s.append(card);});}
-function render(){draw();layers();properties();$('#project-name').value=project.name;historyButtons();}
+function render(){draw();layers();properties();$('#project-name').value=project.name;const alignGroup=$('#align-tools-group');if(alignGroup)alignGroup.hidden=selection.size<2;historyButtons();}
 function transform(){$('#world').style.transform=`translate(${view.x}px,${view.y}px) scale(${view.z})`;$('#zoom').textContent=Math.round(view.z*100)+'%';}
 function fit(){const r=$('#viewport').getBoundingClientRect(),pad=preview?12:90;view.z=Math.max(.05,Math.min((r.width-pad)/project.canvas.width,(r.height-(preview?12:150))/project.canvas.height,2));view.x=(r.width-project.canvas.width*view.z)/2;view.y=(r.height-project.canvas.height*view.z)/2;transform();}
 function zoom(f,cx,cy){const r=$('#viewport').getBoundingClientRect();cx??=r.width/2;cy??=r.height/2;const z=clamp(view.z*f,.05,3);view.x=cx-(cx-view.x)*z/view.z;view.y=cy-(cy-view.y)*z/view.z;view.z=z;transform();}
@@ -376,6 +571,16 @@ function renderLibrary(query=''){
  }
 }
 renderLibrary();
+function switchLeftTab(tab){
+ const isComp=tab==='components';
+ const tabComp=$('#tab-components'),tabLayers=$('#tab-layers'),paneComp=$('#components-pane'),paneLayers=$('#layers-pane');
+ if(tabComp){tabComp.classList.toggle('active',isComp);tabComp.setAttribute('aria-selected',String(isComp));}
+ if(tabLayers){tabLayers.classList.toggle('active',!isComp);tabLayers.setAttribute('aria-selected',String(!isComp));}
+ if(paneComp)paneComp.hidden=!isComp;
+ if(paneLayers)paneLayers.hidden=isComp;
+}
+if($('#tab-components'))$('#tab-components').onclick=()=>switchLeftTab('components');
+if($('#tab-layers'))$('#tab-layers').onclick=()=>switchLeftTab('layers');
 const searchInput=$('#component-search');
 if(searchInput)searchInput.oninput=e=>renderLibrary(e.target.value);
 const collapseLeftBtn=$('#collapse-left');
@@ -407,6 +612,7 @@ window.addEventListener('keydown',event=>{
   event.preventDefault();
   if(!$('#start-screen')?.hidden)closeStartScreen();
   if(document.body.classList?.contains?.('left-collapsed')){document.body.classList.remove('left-collapsed');$('#collapse-left')?.setAttribute('aria-expanded','true');if($('#collapse-left'))$('#collapse-left').textContent='◂';requestAnimationFrame(fit);}
+  switchLeftTab('components');
   const input=$('#component-search');
   input?.focus?.();input?.select?.();
   return;
@@ -513,10 +719,10 @@ function formatModifiedDate(ts){
  try{return new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(ts));}catch{return 'Recently';}
 }
 async function renderStartScreen(){
- const grid=$('#recent-projects-grid'),empty=$('#recent-empty'),countBadge=$('#recent-count-badge'),tplRow=$('#start-templates-row');
+ const grid=$('#recent-projects-grid'),empty=$('#recent-empty'),countBadge=$('#recent-count')||$('#recent-count-badge'),tplRow=$('#start-templates-row');
  if(!grid||!empty)return;
  const list=await storage.listProjects();
- if(countBadge)countBadge.textContent=list.length+' saved';
+ if(countBadge)countBadge.textContent=list.length+(list.length===1?' project':' projects');
  grid.replaceChildren();
  empty.hidden=list.length>0;
  grid.hidden=list.length===0;
@@ -585,6 +791,32 @@ async function renderStartScreen(){
   card.append(thumb,body);
   grid.append(card);
  }
+ const advRow=$('#start-advanced-row');
+ if(advRow&&!advRow.children.length){
+  for(const preset of ADVANCED_PRESETS){
+   const sample=preset.create();
+   const card=button('',async()=>{
+    try{
+     showStartError('');
+     await storage.checkpoint(project);
+     project=validate(preset.create());
+     await storage.saveProjectEntry(project,crypto.randomUUID());
+     openEdges.clear();selection.clear();selected=null;sim.reset();timeline=history(project,40);
+     checkpoint();render();loadFonts();fit();
+     closeStartScreen();
+     notify(preset.name+' created as your own editable project.');
+    }catch(e){showStartError(e.message);notify(e.message);}
+   },'Create an editable copy of the '+preset.name+' design');
+   card.className='template-card advanced-design-card';
+   const thumb=node('div',undefined,'template-card-thumb');
+   const img=node('img');
+   img.src=renderThumbnailSvg(sample);
+   img.alt=preset.name+' preview';
+   thumb.append(img,node('span',preset.tag,'design-tag'));
+   card.append(thumb,node('strong',preset.name),node('small',preset.description),node('span','✎ Customize','design-cta'));
+   advRow.append(card);
+  }
+ }
 
  if(tplRow&&!tplRow.children.length){
   for(const preset of DESKTOP_PRESETS){
@@ -609,6 +841,28 @@ async function renderStartScreen(){
    thumb.append(img);
    card.append(thumb,node('strong',preset.name),node('small',preset.description));
    tplRow.append(card);
+  }
+  for(const [name,desc,fileUrl] of [
+   ['Hyprland Amethyst','Original purple showcase setup with top bar, dock and desktop wallpaper','Hyprland-Amethyst.rce'],
+   ['Amethyst Studio','Full component showcase with linked media, volume and system controls','Hyprland-Amethyst-Studio.rce']
+  ]){
+   const card=button('',async()=>{
+    try{
+     showStartError('');
+     await openProject(await (await fetch(fileUrl)).text(),true);
+     closeStartScreen();
+     notify(name+' template opened.');
+    }catch(e){showStartError(e.message);notify(e.message);}
+   },'Start from '+name+' template');
+   card.className='template-card';
+   const thumb=node('div',undefined,'template-card-thumb');
+   const img=node('img');
+   img.src=renderThumbnailSvg(fresh());
+   img.alt=name+' preview';
+   thumb.append(img);
+   card.append(thumb,node('strong',name),node('small',desc));
+   tplRow.append(card);
+   fetch(fileUrl).then(r=>r.ok?r.text():null).then(t=>{if(t)img.src=renderThumbnailSvg(parse(t));}).catch(()=>{});
   }
  }
 }
@@ -640,21 +894,25 @@ async function createNewProjectFromHome(){
  notify('New project created.');
 }
 if($('#home-btn'))$('#home-btn').onclick=openStartScreen;
-if($('#brand-home'))$('#brand-home').onclick=openStartScreen;
+if($('#brand-home'))$('#brand-home').onclick=ev=>{ev.preventDefault?.();openStartScreen();};
 if($('#start-resume'))$('#start-resume').onclick=closeStartScreen;
 if($('#start-new'))$('#start-new').onclick=createNewProjectFromHome;
 if($('#start-empty-cta'))$('#start-empty-cta').onclick=createNewProjectFromHome;
 if($('#start-open'))$('#start-open').onclick=()=>$('#file').click();
 if($('#start-import'))$('#start-import').onclick=()=>$('#import-file-input')?.click();
-if($('#confirm-delete-cancel'))$('#confirm-delete-cancel').onclick=()=>{pendingDeleteId=null;$('#confirm-delete-dialog')?.close?.();};
-if($('#confirm-delete-yes'))$('#confirm-delete-yes').onclick=async()=>{
- if(!pendingDeleteId)return;
- const id=pendingDeleteId;pendingDeleteId=null;
- await storage.deleteProjectEntry(id);
- $('#confirm-delete-dialog')?.close?.();
- await renderStartScreen();
- notify('Project deleted.');
-};
+for(const sel of ['#confirm-delete-cancel','#cancel-delete-btn','#close-confirm-delete']){
+ if($(sel))$(sel).onclick=()=>{pendingDeleteId=null;$('#confirm-delete-dialog')?.close?.();};
+}
+for(const sel of ['#confirm-delete-yes','#confirm-delete-btn']){
+ if($(sel))$(sel).onclick=async()=>{
+  if(!pendingDeleteId)return;
+  const id=pendingDeleteId;pendingDeleteId=null;
+  await storage.deleteProjectEntry(id);
+  $('#confirm-delete-dialog')?.close?.();
+  await renderStartScreen();
+  notify('Project deleted.');
+ };
+}
 const dropzone=$('#start-dropzone');
 if(dropzone&&typeof window.addEventListener==='function'){
  window.addEventListener('dragover',ev=>{ev.preventDefault();dropzone.classList?.add?.('drag-over');});

@@ -1,0 +1,670 @@
+{
+  "format": "ricing-town",
+  "version": 8,
+  "name": "Midnight Tokyo Flow",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "background": "#070816",
+    "desktop": {
+      "mode": "gradient",
+      "gradientEnd": "#17103a",
+      "angle": 135,
+      "image": "",
+      "fit": "cover",
+      "position": "center",
+      "showText": false,
+      "text": "",
+      "textColor": "#8be9fd"
+    },
+    "activeMonitorId": "primary"
+  },
+  "monitors": [
+    {
+      "id": "primary",
+      "name": "Primary display",
+      "output": "",
+      "width": 1440,
+      "height": 900,
+      "mode": "preferred",
+      "position": "auto",
+      "scale": 1,
+      "primary": true
+    }
+  ],
+  "elements": [
+    {
+      "id": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a",
+      "type": "bar",
+      "x": 40,
+      "y": 28,
+      "name": "Neon top bar",
+      "width": 1840,
+      "height": 60,
+      "fill": "#11142b",
+      "color": "#e0d7ff",
+      "radius": 20,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "appearance": {
+        "opacity": 0.72,
+        "blur": 18,
+        "shadow": 26,
+        "borderWidth": 1,
+        "borderColor": "#6c63ff",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "f403b8f1-5c7f-4e47-bc9a-bce1905fa69e",
+      "type": "workspaces",
+      "x": 18,
+      "y": 10,
+      "name": "Workspaces",
+      "width": 260,
+      "height": 40,
+      "fill": "#202532",
+      "color": "#cdd5e8",
+      "radius": 10,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a",
+      "behavior": {
+        "click": "activate",
+        "scroll": "none",
+        "workspaceCount": 3,
+        "volumeStep": 5,
+        "activeColor": "#b9f579",
+        "mutedColor": "#ddaaa3"
+      }
+    },
+    {
+      "id": "348de1c1-c0da-4359-9000-445524fddc23",
+      "type": "clock",
+      "x": 790,
+      "y": 8,
+      "name": "Clock",
+      "width": 260,
+      "height": 44,
+      "fill": "#242a38",
+      "color": "#b9f579",
+      "radius": 18,
+      "fontSize": 22,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a"
+    },
+    {
+      "id": "6d6316f2-6f86-4374-9082-ce787d2beb29",
+      "type": "network",
+      "x": 1510,
+      "y": 10,
+      "name": "Network",
+      "width": 135,
+      "height": 40,
+      "fill": "#202532",
+      "color": "#cdd5e8",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a"
+    },
+    {
+      "id": "37d759a3-88a3-456f-ad22-38eb6e7a2abb",
+      "type": "battery",
+      "x": 1655,
+      "y": 10,
+      "name": "Battery",
+      "width": 145,
+      "height": 40,
+      "fill": "#202532",
+      "color": "#cdd5e8",
+      "radius": 14,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a"
+    },
+    {
+      "id": "2fa1e444-1af7-436a-af11-aef3ffbf942c",
+      "type": "widget",
+      "x": 120,
+      "y": 230,
+      "name": "Neon greeting",
+      "width": 620,
+      "height": 260,
+      "fill": "#11142b",
+      "color": "#c77dff",
+      "radius": 32,
+      "fontSize": 52,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "slide",
+        "duration": 900,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "once"
+      },
+      "custom": {
+        "text": "NIGHT MODE\n{{time}}",
+        "dataSource": "time",
+        "shape": "rectangle"
+      },
+      "appearance": {
+        "opacity": 0.68,
+        "blur": 22,
+        "shadow": 40,
+        "borderWidth": 2,
+        "borderColor": "#6c63ff",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "4bf35d6f-2002-438a-a984-f5e962d72d3f",
+      "type": "shape",
+      "x": 1410,
+      "y": 300,
+      "name": "Neon orbit",
+      "width": 230,
+      "height": 230,
+      "fill": "#6c63ff",
+      "color": "#070816",
+      "radius": 115,
+      "fontSize": 64,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 12,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "glow",
+        "duration": 1800,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "✦",
+        "dataSource": "static",
+        "shape": "circle"
+      }
+    },
+    {
+      "id": "946f9b56-3c20-4ec9-ae49-c5e0438e572f",
+      "type": "dock",
+      "x": 610,
+      "y": 955,
+      "name": "Neon dock",
+      "width": 700,
+      "height": 86,
+      "fill": "#11142b",
+      "color": "#e0d7ff",
+      "radius": 28,
+      "fontSize": 16,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 16,
+        "gap": 30,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": [
+          {
+            "id": "24a52177-b0bd-4180-a231-7ca7a8b78b5b",
+            "actionId": "terminal",
+            "icon": "⌘",
+            "label": "Terminal",
+            "action": "",
+            "shortcut": ""
+          },
+          {
+            "id": "bb68c72a-13b7-4f47-8758-63af253bac8b",
+            "actionId": "browser",
+            "icon": "◎",
+            "label": "Browser",
+            "action": "",
+            "shortcut": ""
+          },
+          {
+            "id": "85222c68-6053-401e-b8f5-1a8bd1a1f06f",
+            "actionId": "files",
+            "icon": "▣",
+            "label": "Files",
+            "action": "",
+            "shortcut": ""
+          },
+          {
+            "id": "0f164f34-6b57-42ff-8406-dcb522e812da",
+            "actionId": "music",
+            "icon": "♫",
+            "label": "Music",
+            "action": "",
+            "shortcut": ""
+          },
+          {
+            "id": "56664b9d-6868-48cc-910d-2641f05d8b0e",
+            "actionId": "settings",
+            "icon": "⚙",
+            "label": "Settings",
+            "action": "",
+            "shortcut": ""
+          }
+        ]
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "appearance": {
+        "opacity": 0.76,
+        "blur": 20,
+        "shadow": 35,
+        "borderWidth": 1,
+        "borderColor": "#c77dff",
+        "font": "sans-serif",
+        "fontAsset": ""
+      }
+    },
+    {
+      "id": "2cf6aec9-09df-4815-a5c1-846afc3f69a6",
+      "type": "text",
+      "x": 150,
+      "y": 6,
+      "name": "Workspace 1 note",
+      "width": 620,
+      "height": 54,
+      "fill": "#181825",
+      "color": "#c77dff",
+      "radius": 0,
+      "fontSize": 22,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "Focus lane · terminal, browser, music",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a",
+      "workspaceOnly": 1
+    },
+    {
+      "id": "9342e010-b4df-4b6b-ad1b-91130716476a",
+      "type": "text",
+      "x": 150,
+      "y": 6,
+      "name": "Workspace 2 note",
+      "width": 620,
+      "height": 54,
+      "fill": "#181825",
+      "color": "#8be9fd",
+      "radius": 0,
+      "fontSize": 22,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "Creative lane · compose and explore",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a",
+      "workspaceOnly": 2
+    },
+    {
+      "id": "889d40b6-8935-4e4b-ab79-8c1c4be1ff77",
+      "type": "text",
+      "x": 150,
+      "y": 6,
+      "name": "Workspace 3 note",
+      "width": 620,
+      "height": 54,
+      "fill": "#181825",
+      "color": "#ff79c6",
+      "radius": 0,
+      "fontSize": 22,
+      "format": "24h",
+      "monitorId": "all",
+      "reveal": {
+        "mode": "always",
+        "edge": "left",
+        "triggerSize": 4,
+        "hideDelay": 350
+      },
+      "options": {
+        "padding": 4,
+        "gap": 8,
+        "iconSize": 18,
+        "align": "center",
+        "orientation": "horizontal",
+        "showSeconds": false,
+        "showDate": false,
+        "icon": "",
+        "items": []
+      },
+      "bindings": {},
+      "states": {},
+      "logic": [],
+      "animation": {
+        "kind": "none",
+        "duration": 1200,
+        "delay": 0,
+        "easing": "ease-in-out",
+        "enabled": true,
+        "iteration": "infinite"
+      },
+      "custom": {
+        "text": "Rest lane · reset your space",
+        "dataSource": "static",
+        "shape": "rectangle"
+      },
+      "parentId": "48d9b2c3-fc8a-4159-9f31-0e0a2b06323a",
+      "workspaceOnly": 3
+    }
+  ],
+  "assets": [],
+  "assetPacks": [],
+  "extensions": {},
+  "runtime": {
+    "audioTarget": "default",
+    "mediaPlayer": "auto",
+    "monitor": "auto"
+  },
+  "hyprland": {
+    "gapsIn": 8,
+    "gapsOut": 18,
+    "borderSize": 2,
+    "activeBorder": "#c77dff",
+    "inactiveBorder": "#24243e",
+    "rounding": 18,
+    "blurEnabled": true,
+    "blurSize": 12,
+    "blurPasses": 3,
+    "shadowEnabled": true,
+    "shadowRange": 18,
+    "shadowColor": "#000000",
+    "activeOpacity": 1,
+    "inactiveOpacity": 0.94,
+    "layout": "dwindle",
+    "animations": true,
+    "animationSpeed": 5,
+    "animationStyle": "slide",
+    "monitor": "preferred, auto, 1",
+    "keyboardLayout": "us",
+    "keyboardOptions": "",
+    "followMouse": 1,
+    "naturalScroll": false
+  },
+  "integrations": {
+    "shell": "quickshell",
+    "terminal": "kitty",
+    "launcher": "rofi",
+    "notifications": "swaync",
+    "lockscreen": "hyprlock",
+    "gtk": true,
+    "qt": true,
+    "iconTheme": "Papirus-Dark",
+    "cursorTheme": "Bibata-Modern-Ice"
+  },
+  "automation": {
+    "keybindings": [],
+    "windowRules": [],
+    "workspaceRules": []
+  }
+}

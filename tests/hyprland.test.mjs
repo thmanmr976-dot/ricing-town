@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {fresh,serialize,parse} from '../dist/model.js';
 import {hyprlandLua,hyprlandLegacy,fullRiceReport,computeTilingLayout} from '../dist/hyprland.js';
+import {buildFiles} from '../dist/exporter.js';
+import {readFileSync} from 'node:fs';
 
 test('full rice settings survive an rce round trip',()=>{const p=fresh();p.hyprland.gapsOut=24;p.hyprland.layout='master';p.integrations.shell='waybar';const q=parse(serialize(p));assert.equal(q.hyprland.gapsOut,24);assert.equal(q.hyprland.layout,'master');assert.equal(q.integrations.shell,'waybar');});
 test('Hyprland exports contain selected visual settings',()=>{const p=fresh();p.hyprland.rounding=18;p.hyprland.activeBorder='#7aa2f7';const lua=hyprlandLua(p),legacy=hyprlandLegacy(p);assert.match(lua,/rounding = 18/);assert.match(lua,/0xff7aa2f7/);assert.match(legacy,/rounding = 18/);assert.ok(fullRiceReport(p).some(x=>x.includes('Hyprland appearance')));});
@@ -44,4 +46,13 @@ test('gradient active border and tiling preview settings round-trip and export',
  assert.equal(q.hyprland.borderAngle,60);
  assert.match(hyprlandLua(q),/0xff7aa2f7 0xffbb9af7 60deg/);
  assert.match(hyprlandLegacy(q),/rgb\(7aa2f7\) rgb\(bb9af7\) 60deg/);
+});
+test('temporary session launcher and manager terminate shell_pid and process groups on stop',()=>{
+ const p=fresh();
+ const files=buildFiles(p,{widget:'Item {}',bridge:'python',audioEngine:'python'});
+ assert.match(files['start.sh'],/kill -TERM "\$shell_pid"/);
+ assert.match(files['start.sh'],/trap 'cleanup; exit 0' INT TERM HUP/);
+ const managerPy=readFileSync(new URL('../dist/runtime/manager.py',import.meta.url),'utf8');
+ assert.match(managerPy,/os\.killpg\(os\.getpgid\(PROCESS\.pid\), signal\.SIGTERM\)/);
+ assert.match(managerPy,/_terminate_running_temp/);
 });

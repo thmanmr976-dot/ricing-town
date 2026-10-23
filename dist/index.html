@@ -5,8 +5,8 @@
    <div class="start-brand"><span class="brand-mark">▥</span><div><h1>ricing<span>town</span></h1><p>Visual desktop &amp; Hyprland rice studio</p></div></div>
    <div class="start-primary-actions">
     <button id="start-new" class="btn-primary">＋ New project</button>
-    <button id="start-open">📂 Open .rce</button>
-    <button id="start-import">📥 Import file</button>
+    <button id="start-open">📂 Open file</button>
+    <button id="start-import" hidden>📥 Import file</button>
     <button id="start-resume" class="btn-ghost">Resume editor →</button>
    </div>
   </header>
@@ -23,6 +23,11 @@
     <button id="start-empty-cta" class="btn-primary">＋ Create your first rice</button>
    </div>
   </section>
+  <section class="start-section" aria-labelledby="advanced-designs-heading">
+   <div class="start-section-head"><h2 id="advanced-designs-heading">Advanced rice designs</h2><span class="meta-pill">Fully editable · saved to your projects</span></div>
+   <p class="start-section-hint">Pick a design to create your own editable copy. It is saved in Recent projects so you can come back and change any bar, widget, colour or Hyprland setting at any time.</p>
+   <div id="start-advanced-row" class="templates-row advanced-designs-row"></div>
+  </section>
   <section class="start-section" aria-labelledby="templates-heading">
    <div class="start-section-head"><h2 id="templates-heading">Start from template</h2><span class="meta-pill">Curated setups</span></div>
    <div id="start-templates-row" class="templates-row"></div>
@@ -31,8 +36,8 @@
 </section>
 <header class="editor-topbar">
  <div class="topbar-left">
-  <button id="home-btn" class="icon-btn" title="Home · Project start screen" aria-label="Open project start screen">⌂<span>Home</span></button>
-  <a class="brand" href="#home" id="brand-home" title="Back to start screen">▥ <b>ricing<span>town</span></b></a>
+  <button id="home-btn" class="icon-btn" title="Home · Project start screen" aria-label="Open project start screen" hidden>⌂<span>Home</span></button>
+  <a class="brand" href="#home" id="brand-home" title="Home · Open project start screen">▥ <b>ricing<span>town</span></b></a>
   <div class="divider"></div>
   <div class="project-title-wrap">
    <input id="project-name" aria-label="Project name" maxlength="120" title="Click to rename project">
@@ -42,31 +47,34 @@
  <div class="topbar-center" role="toolbar" aria-label="History">
   <button id="undo" class="icon-btn" aria-label="Undo" data-tooltip="Undo (Ctrl+Z)" title="Undo (Ctrl+Z)">↶</button>
   <button id="redo" class="icon-btn" aria-label="Redo" data-tooltip="Redo (Ctrl+Shift+Z)" title="Redo (Ctrl+Shift+Z)">↷</button>
-  <button id="widget-neighborhood" class="header-studio-btn" title="Open full-screen custom widget builder">⬡ Widget Studio</button>
  </div>
  <div class="topbar-right header-actions">
   <details id="file-menu" class="topbar-menu">
    <summary aria-label="Project and file menu">☰ File &amp; Export ▾</summary>
    <div class="menu-popover" role="menu">
-    <button id="open" role="menuitem">📂 Open .rce… <kbd>Ctrl+O</kbd></button>
+    <button id="open" role="menuitem">📂 Open file… <kbd>Ctrl+O</kbd></button>
     <button id="import-waybar" role="menuitem">📥 Import Waybar config…</button>
     <button id="export" role="menuitem">📦 Export package…</button>
-    <hr>
-    <button id="live-wallpaper-settings" role="menuitem">🎞 Live Wallpaper…</button>
-    <button id="example" role="menuitem">✦ Load Amethyst example</button>
-    <button id="studio-example" role="menuitem">◈ Load Amethyst Studio</button>
-    <button id="restore" role="menuitem">↺ Restore recovery copy</button>
-    <hr>
-    <div class="menu-runtime-section">
-     <span class="menu-section-label">Runtime Telemetry</span>
-     <div class="runtime-controls">
-      <select id="data-mode" aria-label="Data mode"><option value="demo">Demo data</option><option value="live">Live helper</option></select>
-      <button id="pair-helper" type="button">Pair helper</button>
-     </div>
-     <span id="live-status" class="mode-badge">Demo data</span>
-    </div>
-    <hr>
     <button id="shortcuts" role="menuitem">⌨ Keyboard shortcuts <kbd>?</kbd></button>
+    <hr>
+    <button id="live-wallpaper-settings" role="menuitem" hidden>🎞 Live Wallpaper…</button>
+    <button id="example" role="menuitem" hidden>✦ Load Amethyst example</button>
+    <button id="studio-example" role="menuitem" hidden>◈ Load Amethyst Studio</button>
+    <details class="advanced-menu-group">
+     <summary>⋯ Advanced</summary>
+     <div class="advanced-menu-body">
+      <button id="restore" role="menuitem">↺ Restore recovery copy</button>
+      <div class="project-tools"></div>
+      <div class="menu-runtime-section">
+       <span class="menu-section-label">Live Data (بيانات حية)</span>
+       <div class="runtime-controls">
+        <select id="data-mode" aria-label="Data mode"><option value="demo">Demo data</option><option value="live">Live helper</option></select>
+        <button id="pair-helper" type="button">Pair helper</button>
+       </div>
+       <span id="live-status" class="mode-badge">Demo data</span>
+      </div>
+     </div>
+    </details>
    </div>
   </details>
   <button id="save" class="btn-primary" title="Save .rce file (Ctrl+S)">Save .rce</button>
@@ -75,22 +83,26 @@
 </header>
 <main id="editor-main">
  <aside id="left-panel" class="layers-panel" aria-label="Components and layers">
-  <div class="panel-heading">
-   <span class="panel-title-text">Components</span>
+  <div class="panel-heading left-tabs-heading">
+   <div class="left-panel-tabs" role="tablist" aria-label="Left panel views">
+    <button id="tab-components" type="button" role="tab" aria-selected="true" class="panel-tab active">Components</button>
+    <button id="tab-layers" type="button" role="tab" aria-selected="false" class="panel-tab">Layers <span id="count" class="meta-pill">0</span></button>
+   </div>
    <div class="panel-heading-actions">
     <button id="desktop" class="icon-btn-sm" title="Desktop &amp; Hyprland settings" aria-label="Desktop settings">▣</button>
     <button id="collapse-left" class="icon-btn-sm" title="Collapse left panel" aria-label="Toggle left panel" aria-expanded="true">«</button>
    </div>
   </div>
-  <div class="component-search-box">
-   <input id="component-search" type="search" placeholder="Search components… (Ctrl+K)" aria-label="Search components">
+  <div id="components-pane" class="left-tab-pane">
+   <div class="component-search-box">
+    <input id="component-search" type="search" placeholder="Search components… (Ctrl+K)" aria-label="Search components">
+    <button id="widget-neighborhood" type="button" class="add-widget-studio-btn" title="Open full-screen custom widget builder">＋ Widget</button>
+   </div>
+   <div id="library" class="library"></div>
   </div>
-  <div id="library" class="library"></div>
-  <div class="panel-heading layers-heading"><span class="panel-title-text">Layers</span> <span id="count" class="meta-pill">0</span></div>
-  <div class="scene-label">Shift-click to select multiple layers</div>
-  <div id="layers" class="layers-list"></div>
-  <div class="project-tools">
-   <label class="snap-toggle"><input id="snap" type="checkbox" checked> <span>Snap to edges &amp; guides</span></label>
+  <div id="layers-pane" class="left-tab-pane" hidden>
+   <div class="scene-label">Shift-click to select multiple layers</div>
+   <div id="layers" class="layers-list"></div>
   </div>
  </aside>
  <section id="viewport" aria-label="Design canvas">
@@ -103,20 +115,23 @@
     <button id="select-tool" class="active" aria-label="Select tool" data-tooltip="Select (V)" title="Select tool (V)">↖</button>
     <button id="pan-tool" aria-label="Pan tool" data-tooltip="Pan (H / Space)" title="Pan tool (H / Space)">✥</button>
     <button id="toggle-tiling-preview" title="Toggle Hyprland window preview" data-tooltip="Preview tiled windows" aria-pressed="false">⊞ Windows</button>
+    <label class="snap-pill" title="Snap to edges and guides"><input id="snap" type="checkbox" checked> <span>Snap</span></label>
    </div>
-   <i></i>
-   <div class="tool-group">
-    <button id="align-left" data-tooltip="Align left" title="Align left">⇤</button>
-    <button id="align-center" data-tooltip="Align horizontal center" title="Center horizontally">↔</button>
-    <button id="align-right" data-tooltip="Align right" title="Align right">⇥</button>
-    <button id="align-top" data-tooltip="Align top" title="Align top">⇡</button>
-    <button id="align-middle" data-tooltip="Align vertical middle" title="Center vertically">↕</button>
-    <button id="align-bottom" data-tooltip="Align bottom" title="Align bottom">⇣</button>
-   </div>
-   <i></i>
-   <div class="tool-group">
-    <button id="distribute-x" data-tooltip="Distribute horizontally" title="Distribute horizontally">⋯</button>
-    <button id="distribute-y" data-tooltip="Distribute vertically" title="Distribute vertically">⋮</button>
+   <div id="align-tools-group" class="align-tools-group" hidden>
+    <i></i>
+    <div class="tool-group">
+     <button id="align-left" data-tooltip="Align left" title="Align left">⇤</button>
+     <button id="align-center" data-tooltip="Align horizontal center" title="Center horizontally">↔</button>
+     <button id="align-right" data-tooltip="Align right" title="Align right">⇥</button>
+     <button id="align-top" data-tooltip="Align top" title="Align top">⇡</button>
+     <button id="align-middle" data-tooltip="Align vertical middle" title="Center vertically">↕</button>
+     <button id="align-bottom" data-tooltip="Align bottom" title="Align bottom">⇣</button>
+    </div>
+    <i></i>
+    <div class="tool-group">
+     <button id="distribute-x" data-tooltip="Distribute horizontally" title="Distribute horizontally">⋯</button>
+     <button id="distribute-y" data-tooltip="Distribute vertically" title="Distribute vertically">⋮</button>
+    </div>
    </div>
   </div>
   <div class="canvas-footer"><span id="measurements">Space + drag to pan · Scroll to zoom</span><div><button id="zoom-out" aria-label="Zoom out" data-tooltip="Zoom out (−)">−</button><button id="fit" data-tooltip="Fit screen (Shift+1)">Fit</button><button id="zoom-in" aria-label="Zoom in" data-tooltip="Zoom in (+)">+</button><span id="zoom"></span></div></div>

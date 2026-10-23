@@ -15,8 +15,9 @@ set -eu
 cd -- "$(dirname -- "$0")"
 command -v waybar >/dev/null || { echo "Waybar is required" >&2; exit 1; }
 waybar -c "$PWD/waybar/config.jsonc" -s "$PWD/waybar/style.css" & waybar_pid=$!
-cleanup(){ kill "$waybar_pid" 2>/dev/null || true; [ -z "\${qs_pid:-}" ] || kill "$qs_pid" 2>/dev/null || true; }
-trap cleanup EXIT INT TERM
+cleanup(){ kill -TERM "$waybar_pid" 2>/dev/null || true; [ -z "\${qs_pid:-}" ] || kill -TERM "$qs_pid" 2>/dev/null || true; }
+trap 'cleanup; exit 0' INT TERM HUP
+trap cleanup EXIT
 ${qp.elements.length?'sh "$PWD/quickshell/start.sh" & qs_pid=$!\nwait "$qs_pid"':'wait "$waybar_pid"'}
 `;
  files['README.md']=`# Ricing Town hybrid shell
