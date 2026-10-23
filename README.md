@@ -6,64 +6,89 @@ Design visually in your browser, test interactively with live window tiling prev
 
 ---
 
-## ✨ Features
+## 🚀 What's New in Recent Releases
 
-### 1. Project Start Screen & Project Hub
-- **Recent Projects**: Visual grid of cards showing dynamic SVG canvas thumbnails, resolution, layer counts, and last modified timestamps.
-- **Card Actions**: Open, inline Rename, Duplicate, or Delete projects (with confirmation dialog).
-- **Starter Templates**: Jumpstart your setup with built-in presets including *Neon Orbit*, *Aurora Grid*, *Paper Calm*, and *Amethyst*.
-- **Drag & Drop**: Drop `.rce` or `.json` files directly onto the start screen or editor to import.
-- **Safe Persistence**: Built on IndexedDB with automatic `localStorage` fallback and auto-save indicators (`Saved locally` / `Saving...`).
+### 🌟 Project Start Screen & Library Hub
+- **Home Hub**: A welcoming start screen shown on launch and via the Top Bar **Home** button.
+- **Recent Projects Grid**: Visual cards with dynamically generated SVG canvas thumbnails, resolution, layer counts, and last modified dates.
+- **Card Actions**: Instant project loading, inline card renaming, duplicating, and safe project deletion with modal confirmation.
+- **Start from Templates**: One-click starters including *Neon Orbit*, *Aurora Grid*, *Paper Calm*, and *Amethyst*.
+- **Drag & Drop Import**: Drop `.rce` or `.json` projects directly into the app with automatic validation and error reporting.
+- **Robust Storage**: Uses IndexedDB with transparent `localStorage` fallback and visible autosave indicator.
 
-### 2. Figma-Like Editor Layout
-- **Clean Top Bar**:
-  - Project name (click or type to rename) and auto-save status.
-  - Centered Undo/Redo (`Ctrl+Z`, `Ctrl+Shift+Z`), Widget Studio launcher, and Live Tiling preview toggle.
-  - Primary **Save .rce** (`Ctrl+S`) button, `File & Export ▾` menu (Open, Import `.rce`/`.json`/Waybar, Full Rice Export, Package Download, Compatibility Inspector, Starter Presets, Asset Manager, Pairing Helper), and fullscreen **Preview**.
-- **Categorized Component Panel (Left)**:
-  - Collapsible categories: **System** (*Bar, Dock, Workspaces, Battery, Network, Volume, Brightness, Bluetooth, Notifications, Launcher, Power*), **Info** (*Clock, CPU, Memory, Memory Chart, GPU, Temperature, Disk, Uptime*), **Media** (*Music, Audio Visualizer*), and **Decor** (*Custom Widget, Text, Shape*).
-  - Instant search filtering with shortcut badge (`Ctrl/Cmd+K`).
-  - Collapse left panel into a minimalist icon-rail.
-- **Collapsible Properties Panel (Right)**:
-  - Scannable, collapsible sections with sensible defaults open and advanced controls collapsed.
-  - Per-section **Reset** action to restore defaults quickly.
-  - Color pickers paired with synchronized `#rrggbb` hex text inputs.
-  - Collapse right panel to maximize canvas workspace.
-- **Interactive Canvas**:
-  - Pan & zoom (Space + drag, scroll wheel, floating zoom toolbar, fit to screen).
-  - Floating toolbar with grouped actions, alignment tools, and shortcut tooltips.
-  - Multi-select (`Shift+click`), resize handles, auto-snap guides, and container containment.
+### 🎨 Figma-Inspired Editor Layout Overhaul
+- **Streamlined Top Bar**: Replaced button clutter with a clean 3-zone layout:
+  - Left: Home button, brand logo, inline project rename, and autosave status pill.
+  - Center: Undo/Redo history buttons, Widget Studio launcher, and Live Tiling preview toggle.
+  - Right: Primary `Save .rce` button, consolidated `File & Export ▾` menu, and fullscreen `Preview`.
+- **Categorized Component Panel**:
+  - Components grouped into collapsible sections: **System**, **Info**, **Media**, and **Decor**.
+  - Real-time search filter with keyboard shortcut (`Ctrl/Cmd+K`).
+  - Collapse left panel into a compact icon rail.
+- **Collapsible Properties Panel**:
+  - Organized into collapsible sections with sensible default states (frequently used sections open, advanced sections collapsed).
+  - Per-section **Reset to defaults** button.
+  - Dual-input color pickers with synced `#rrggbb` hex text inputs.
+  - Panel collapse toggle to maximize canvas editing space.
 
-### 3. Live Hyprland Window Tiling Preview
-- Toggle live mock windows directly inside the canvas to preview your real rice aesthetics:
-  - Supports **Dwindle**, **Master**, and **Scrolling** layouts with live split ratio calculation.
-  - Accurate workarea insets accounting for top/bottom/left/right status bars and docks.
-  - Renders inner and outer gaps (`gaps_in` / `gaps_out`), window border sizes, solid or gradient active borders (`border_size`, `col.active_border`), window rounding (`rounding`), active/inactive opacity, background blur, and drop shadows.
-  - Window animations (*slide*, *popin*, *fade*) with customizable speeds and replay controls.
+### 🪟 Live Hyprland Window Tiling Preview
+- Interactive mock windows simulating live Hyprland tiling behavior inside the canvas:
+  - Supports **Dwindle**, **Master**, and **Scrolling** layouts with real-time split ratio adjustments.
+  - Accurate screen workarea calculation factoring in status bars, docks, and panel margins.
+  - Renders inner/outer gaps (`gaps_in` / `gaps_out`), borders (solid or gradient), corner rounding, active/inactive window opacity, background blur, and drop shadows.
+  - Window entrance animations (*slide*, *popin*, *fade*) with adjustable speed and replay button.
 
-### 4. Widget Neighborhood Studio
-- Dedicated studio mode for authoring custom desktop widgets and decorative elements without limits.
-- Bind properties to live data sources: Time, Date, CPU, RAM, Battery, Network, Music / MPRIS, and CAVA spectrum audio.
-- CSS transitions, animations (Float, Pulse, Rotate, Glow, Slide, Fade), and multi-keyframe timeline animations.
-- **Visual Logic**: Define conditional rules (e.g. change color, opacity, text, or animation when battery is low or CPU is high) without scripting.
+### 🧩 Widget Neighborhood Studio
+- Fullscreen authoring environment for custom widgets, cards, text banners, and decorative shapes.
+- Direct telemetry data bindings: Time, Date, CPU, RAM, Battery, Network, MPRIS player, and CAVA audio spectrum.
+- CSS transitions, animations (Float, Pulse, Rotate, Glow, Slide, Fade), and multi-keyframe timeline interpolation.
+- **Visual Logic Engine**: Add condition-based visual rules (e.g., change color or trigger pulse when battery drops below 20%) without writing any code.
 
-### 5. Full Rice & Modular Export
-- **Download Full Rice**: Generates a unified bundle containing:
-  - Hyprland configuration (Lua or classic `hyprland.conf`).
-  - Quickshell QML application or Waybar config & GTK CSS.
-  - Theming for Kitty/Foot, Rofi/Wofi, SwayNC, Hyprlock, and GTK color fragments.
-  - Embedded wallpapers (static images, gradients, or video live wallpaper via `mpvpaper`).
-  - Project `.rce` file and local assets.
-  - Safe `install.sh` script with `--dry-run` and automatic backup into `~/.config/ricing-town`.
-- **Waybar Integration**: Bi-directional support — import existing Waybar `config` and `style.css` files, edit them visually, and export updated setups.
-- **Hybrid Engine**: Route native bar modules to Waybar while rendering freeform floating widgets with Quickshell.
+### 🔄 Waybar & Hybrid Rice Architecture
+- **Bi-directional Waybar**: Import existing Waybar `config` and `style.css` files, edit them visually, and export clean modular Waybar configs.
+- **Hybrid Rice Mode**: Automatically routes traditional status bar modules to Waybar while running custom floating widgets in Quickshell.
 
-### 6. Live Companion Helper & Demo Mode
-- **Demo Mode**: Safe in-browser simulation for quick prototyping without making system calls.
-- **Live Mode**: Optional local companion helper (`npm run helper`) running on `127.0.0.1:5174`:
-  - 6-digit pairing code authentication.
-  - Streams real system metrics (CPU, RAM, Battery, Audio volume/mute, Network status, MPRIS media).
-  - Power actions (Sleep, Reboot, Power off) require explicit two-step user confirmation.
+### 🖥️ Multi-Display Targeting
+- Add and configure multiple monitors with Hyprland output names, custom resolutions, positions, scales, and primary flags.
+- Target individual elements to specific displays or span across all connected screens.
+
+---
+
+## ✨ Core Features
+
+| Feature | Description |
+| :--- | :--- |
+| **Canvas & Artboard** | Pan, zoom, fit to screen, snap to grid/edges, multi-selection, alignment, and auto-distribution. |
+| **Component Catalog** | Status Bar, Dock, Workspaces, Clock, System Stats (CPU, RAM, GPU, Temp, Disk, Uptime), Audio, Network, Bluetooth, Battery, Notifications, Launchers, Power Menu, and Music Visualizer. |
+| **Wallpapers & Styling** | Solid colors, multi-angle gradients, image wallpapers (PNG/JPEG/WebP), and live video wallpapers (`.mp4`/`.webm` with `mpvpaper`). |
+| **Typography & Assets** | System fonts, custom TTF/OTF font upload, SVG icon embedding, and local asset manager with SHA-256 integrity verification. |
+| **Hyprland Rules** | Visual editor for window rules (floating, centered, workspace assignments) and custom keyboard shortcuts. |
+| **Live Companion** | Optional local Node.js daemon (`npm run helper`) providing real system metrics via WebSocket with pairing code security. |
+| **Full Rice Export** | Complete downloadable archive with Hyprland Lua/conf configs, shell QML, Waybar configs, themes for Kitty/Foot/Rofi/SwayNC/Hyprlock, and safe `install.sh` (`--dry-run`). |
+
+---
+
+## 🗺️ Roadmap & Future Plans
+
+We have exciting improvements planned for upcoming versions of Ricing Town:
+
+### 🌟 Phase 1: Community & Preset Ecosystem
+- [ ] **Community Rice Hub**: Browse, preview, and download community-shared rices directly within the editor.
+- [ ] **One-Click Rice Sharing**: Export shareable short links or self-contained `.rce` bundles to share setups with the community.
+- [ ] **Custom Template Library**: Save custom-built widgets and setups as reusable personal templates.
+- [ ] **Tagging & Collections**: Organize projects on the Start Screen by tags (*Minimal*, *Nord*, *Catppuccin*, *Cyberpunk*, *Dual-Screen*) and search query.
+
+### ⚡ Phase 2: Enhanced Editor & Visuals
+- [ ] **GLSL Shader Backgrounds**: Visual picker and preview for interactive GLSL animated background shaders.
+- [ ] **Advanced Animation Curve Editor**: Visual cubic-bezier curve editor for custom window and widget transition timing.
+- [ ] **Unified Color Theme Generator**: Generate complete color palettes from wallpaper dominant colors (using Material You / Pywal algorithms).
+- [ ] **Batch Project Backup**: Export and import an archive containing all local projects and assets in a single `.zip`.
+
+### 🐧 Phase 3: Expanded Linux & Compositor Support
+- [ ] **Additional Wayland Compositors**: Extend export targets to support **Niri**, **Sway**, and **River**.
+- [ ] **System Auto-Discovery**: Companion helper automatically detects installed terminal emulators, app launchers, and notification daemons to tailor exported configs.
+- [ ] **Agnostic Bar Exporters**: Direct export support for additional bars such as **Eww** and **Ags (Aylur's GTK Shell)**.
+- [ ] **Live Hot-Reload CLI**: Apply rices to a running Hyprland session in real time with instant rollback capabilities.
 
 ---
 
@@ -71,7 +96,7 @@ Design visually in your browser, test interactively with live window tiling prev
 
 ### Prerequisites
 - Modern web browser (Chrome, Chromium, Firefox, etc.)
-- [Node.js](https://nodejs.org/) (v18 or newer recommended; zero npm dependencies required).
+- [Node.js](https://nodejs.org/) (v18 or newer recommended; zero external npm dependencies required).
 
 ### Run the Visual Editor
 ```bash
@@ -118,7 +143,7 @@ npm run helper
 
 ## 🧪 Testing
 
-The test suite validates data schemas, project round-trips, layout computation, UI interactions, and exporter outputs:
+The automated test suite verifies schema integrity, migrations, visual logic, layout calculation, UI interactions, and packaging:
 
 ```bash
 # Run all unit and integration tests (60 Node.js tests + 10 Python tests)
