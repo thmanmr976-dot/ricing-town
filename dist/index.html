@@ -1,14 +1,141 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ricing Town — Desktop Studio</title><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css?v=20261020b"></head><body>
-<header><a class="brand" href="#">▥ <b>ricing<span>town</span></b></a><input id="project-name" aria-label="Project name" maxlength="120"><span id="save-status" role="status">Opening project…</span><div class="runtime-controls"><select id="data-mode" aria-label="Data mode"><option value="demo">Demo</option><option value="live">Live</option></select><button id="pair-helper">Pair helper</button><span id="live-status" class="mode-badge">Demo data</span></div><div class="header-actions"><button id="widget-neighborhood" class="header-studio-btn">⬡ Widget Neighborhood</button><button id="undo" aria-label="Undo" title="Ctrl+Z">↶</button><button id="redo" aria-label="Redo" title="Ctrl+Shift+Z">↷</button><button id="shortcuts" aria-label="Keyboard shortcuts">?</button><button id="open">Open</button><button id="save">Save .rce</button><button id="export">Export package</button><button id="preview" aria-pressed="false">▶ Preview</button></div></header>
-<main><aside class="layers-panel"><div class="panel-heading">Components <button id="desktop" title="Desktop settings">▣</button></div><div id="library" class="library"></div><div class="panel-heading">Layers <span id="count"></span></div><div class="scene-label">Shift-click to select multiple layers</div><div id="layers"></div><div class="project-tools"><button id="live-wallpaper-settings">🎞 Live Wallpaper</button><button id="example">Open Amethyst example</button><button id="studio-example">Open Amethyst Studio</button><button id="import-waybar">Import Waybar</button><button id="restore">Restore recovery copy</button><label><input id="snap" type="checkbox" checked> Snap to edges</label></div></aside>
-<section id="viewport" aria-label="Design canvas"><div class="canvas-caption" id="canvas-caption">DESKTOP</div><div id="preview-note" hidden>SIMULATED DATA · No connection to your system <button id="reset-preview">Reset states</button></div><div id="world"><div id="artboard"><video id="live-wallpaper" muted loop playsinline></video><div class="desktop-label"></div><div id="tiling-preview" hidden aria-label="Hyprland window preview"></div><div id="elements"></div><div id="guides"></div></div></div><section id="widget-popup" hidden aria-label="Widget panel"></section><div class="toolbar"><button id="select-tool" class="active" aria-label="Select tool">↖</button><button id="pan-tool" aria-label="Pan tool">✥</button><button id="toggle-tiling-preview" title="Toggle Hyprland window preview" aria-pressed="false">⊞ Windows</button><i></i><button id="align-left" title="Align left">⇤</button><button id="align-center" title="Center horizontally">↔</button><button id="align-right" title="Align right">⇥</button><button id="align-top" title="Align top">⇡</button><button id="align-middle" title="Center vertically">↕</button><button id="align-bottom" title="Align bottom">⇣</button><button id="distribute-x" title="Distribute horizontally">⋯</button><button id="distribute-y" title="Distribute vertically">⋮</button></div><div class="canvas-footer"><span id="measurements">Space + drag to pan · Scroll to zoom</span><div><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit">Fit</button><button id="zoom-in" aria-label="Zoom in">+</button><span id="zoom"></span></div></div></section>
-<aside class="properties-panel"><div class="panel-heading">Properties <span class="accent">Design</span></div><div id="properties"></div></aside></main>
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ricing Town — Desktop Studio</title><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css?v=20261023a"></head><body>
+<section id="start-screen" class="start-screen" aria-label="Project start screen" hidden>
+ <div class="start-shell">
+  <header class="start-header">
+   <div class="start-brand"><span class="brand-mark">▥</span><div><h1>ricing<span>town</span></h1><p>Visual desktop &amp; Hyprland rice studio</p></div></div>
+   <div class="start-primary-actions">
+    <button id="start-new" class="btn-primary">＋ New project</button>
+    <button id="start-open">📂 Open .rce</button>
+    <button id="start-import">📥 Import file</button>
+    <button id="start-resume" class="btn-ghost">Resume editor →</button>
+   </div>
+  </header>
+  <div id="start-dropzone" class="start-dropzone" role="region" aria-label="Drop .rce project file">
+   <span class="drop-icon">⬡</span>
+   <div><strong>Drag &amp; drop a <code>.rce</code>, <code>.json</code> or Waybar config anywhere to import</strong><small>Projects are stored locally in IndexedDB with automatic recovery snapshots.</small></div>
+  </div>
+  <p id="start-error" class="start-error" role="alert" hidden></p>
+  <section class="start-section" aria-labelledby="recent-projects-heading">
+   <div class="start-section-head"><h2 id="recent-projects-heading">Recent projects</h2><span id="recent-count" class="meta-pill">0 projects</span></div>
+   <div id="recent-projects-grid" class="recent-grid"></div>
+   <div id="recent-empty" class="recent-empty" hidden>
+    <p>No saved projects yet. Start from a blank desktop or launch a curated template below.</p>
+    <button id="start-empty-cta" class="btn-primary">＋ Create your first rice</button>
+   </div>
+  </section>
+  <section class="start-section" aria-labelledby="templates-heading">
+   <div class="start-section-head"><h2 id="templates-heading">Start from template</h2><span class="meta-pill">Curated setups</span></div>
+   <div id="start-templates-row" class="templates-row"></div>
+  </section>
+ </div>
+</section>
+<header class="editor-topbar">
+ <div class="topbar-left">
+  <button id="home-btn" class="icon-btn" title="Home · Project start screen" aria-label="Open project start screen">⌂<span>Home</span></button>
+  <a class="brand" href="#home" id="brand-home" title="Back to start screen">▥ <b>ricing<span>town</span></b></a>
+  <div class="divider"></div>
+  <div class="project-title-wrap">
+   <input id="project-name" aria-label="Project name" maxlength="120" title="Click to rename project">
+   <span id="save-status" role="status">Opening project…</span>
+  </div>
+ </div>
+ <div class="topbar-center" role="toolbar" aria-label="History">
+  <button id="undo" class="icon-btn" aria-label="Undo" data-tooltip="Undo (Ctrl+Z)" title="Undo (Ctrl+Z)">↶</button>
+  <button id="redo" class="icon-btn" aria-label="Redo" data-tooltip="Redo (Ctrl+Shift+Z)" title="Redo (Ctrl+Shift+Z)">↷</button>
+  <button id="widget-neighborhood" class="header-studio-btn" title="Open full-screen custom widget builder">⬡ Widget Studio</button>
+ </div>
+ <div class="topbar-right header-actions">
+  <details id="file-menu" class="topbar-menu">
+   <summary aria-label="Project and file menu">☰ File &amp; Export ▾</summary>
+   <div class="menu-popover" role="menu">
+    <button id="open" role="menuitem">📂 Open .rce… <kbd>Ctrl+O</kbd></button>
+    <button id="import-waybar" role="menuitem">📥 Import Waybar config…</button>
+    <button id="export" role="menuitem">📦 Export package…</button>
+    <hr>
+    <button id="live-wallpaper-settings" role="menuitem">🎞 Live Wallpaper…</button>
+    <button id="example" role="menuitem">✦ Load Amethyst example</button>
+    <button id="studio-example" role="menuitem">◈ Load Amethyst Studio</button>
+    <button id="restore" role="menuitem">↺ Restore recovery copy</button>
+    <hr>
+    <div class="menu-runtime-section">
+     <span class="menu-section-label">Runtime Telemetry</span>
+     <div class="runtime-controls">
+      <select id="data-mode" aria-label="Data mode"><option value="demo">Demo data</option><option value="live">Live helper</option></select>
+      <button id="pair-helper" type="button">Pair helper</button>
+     </div>
+     <span id="live-status" class="mode-badge">Demo data</span>
+    </div>
+    <hr>
+    <button id="shortcuts" role="menuitem">⌨ Keyboard shortcuts <kbd>?</kbd></button>
+   </div>
+  </details>
+  <button id="save" class="btn-primary" title="Save .rce file (Ctrl+S)">Save .rce</button>
+  <button id="preview" aria-pressed="false" title="Toggle interactive preview">▶ Preview</button>
+ </div>
+</header>
+<main id="editor-main">
+ <aside id="left-panel" class="layers-panel" aria-label="Components and layers">
+  <div class="panel-heading">
+   <span class="panel-title-text">Components</span>
+   <div class="panel-heading-actions">
+    <button id="desktop" class="icon-btn-sm" title="Desktop &amp; Hyprland settings" aria-label="Desktop settings">▣</button>
+    <button id="collapse-left" class="icon-btn-sm" title="Collapse left panel" aria-label="Toggle left panel" aria-expanded="true">«</button>
+   </div>
+  </div>
+  <div class="component-search-box">
+   <input id="component-search" type="search" placeholder="Search components… (Ctrl+K)" aria-label="Search components">
+  </div>
+  <div id="library" class="library"></div>
+  <div class="panel-heading layers-heading"><span class="panel-title-text">Layers</span> <span id="count" class="meta-pill">0</span></div>
+  <div class="scene-label">Shift-click to select multiple layers</div>
+  <div id="layers" class="layers-list"></div>
+  <div class="project-tools">
+   <label class="snap-toggle"><input id="snap" type="checkbox" checked> <span>Snap to edges &amp; guides</span></label>
+  </div>
+ </aside>
+ <section id="viewport" aria-label="Design canvas">
+  <div class="canvas-caption" id="canvas-caption">DESKTOP</div>
+  <div id="preview-note" hidden>SIMULATED DATA · No connection to your system <button id="reset-preview">Reset states</button></div>
+  <div id="world"><div id="artboard"><video id="live-wallpaper" muted loop playsinline></video><div class="desktop-label"></div><div id="tiling-preview" hidden aria-label="Hyprland window preview"></div><div id="elements"></div><div id="guides"></div></div></div>
+  <section id="widget-popup" hidden aria-label="Widget panel"></section>
+  <div class="toolbar" role="toolbar" aria-label="Canvas tools">
+   <div class="tool-group">
+    <button id="select-tool" class="active" aria-label="Select tool" data-tooltip="Select (V)" title="Select tool (V)">↖</button>
+    <button id="pan-tool" aria-label="Pan tool" data-tooltip="Pan (H / Space)" title="Pan tool (H / Space)">✥</button>
+    <button id="toggle-tiling-preview" title="Toggle Hyprland window preview" data-tooltip="Preview tiled windows" aria-pressed="false">⊞ Windows</button>
+   </div>
+   <i></i>
+   <div class="tool-group">
+    <button id="align-left" data-tooltip="Align left" title="Align left">⇤</button>
+    <button id="align-center" data-tooltip="Align horizontal center" title="Center horizontally">↔</button>
+    <button id="align-right" data-tooltip="Align right" title="Align right">⇥</button>
+    <button id="align-top" data-tooltip="Align top" title="Align top">⇡</button>
+    <button id="align-middle" data-tooltip="Align vertical middle" title="Center vertically">↕</button>
+    <button id="align-bottom" data-tooltip="Align bottom" title="Align bottom">⇣</button>
+   </div>
+   <i></i>
+   <div class="tool-group">
+    <button id="distribute-x" data-tooltip="Distribute horizontally" title="Distribute horizontally">⋯</button>
+    <button id="distribute-y" data-tooltip="Distribute vertically" title="Distribute vertically">⋮</button>
+   </div>
+  </div>
+  <div class="canvas-footer"><span id="measurements">Space + drag to pan · Scroll to zoom</span><div><button id="zoom-out" aria-label="Zoom out" data-tooltip="Zoom out (−)">−</button><button id="fit" data-tooltip="Fit screen (Shift+1)">Fit</button><button id="zoom-in" aria-label="Zoom in" data-tooltip="Zoom in (+)">+</button><span id="zoom"></span></div></div>
+ </section>
+ <aside id="right-panel" class="properties-panel" aria-label="Inspector properties">
+  <div class="panel-heading">
+   <span class="panel-title-text">Properties <span class="accent">Inspector</span></span>
+   <button id="collapse-right" class="icon-btn-sm" title="Collapse properties panel" aria-label="Toggle properties panel" aria-expanded="true">»</button>
+  </div>
+  <div id="properties"></div>
+ </aside>
+</main>
 <div id="preview-controls" hidden><span id="preview-mode-label">Preview · Demo data</span><button id="clean">Hide all controls</button><button id="exit-preview">← Design</button></div>
-<dialog id="shortcut-dialog"><div class="dialog-heading"><h2>Editor shortcuts</h2><button id="close-shortcuts">×</button></div><p>Use ⌘ instead of Ctrl on macOS. Text fields keep native shortcuts.</p><dl><dt>Undo / Redo</dt><dd>Ctrl Z / Ctrl Shift Z</dd><dt>Copy / Cut / Paste</dt><dd>Ctrl C / X / V</dd><dt>Duplicate / Select all</dt><dd>Ctrl D / Ctrl A</dd><dt>Save / Open</dt><dd>Ctrl S / O</dd><dt>Nudge</dt><dd>Arrows · Shift = 10px</dd><dt>Delete / Deselect</dt><dd>Delete / Escape</dd><dt>Select / Pan</dt><dd>V / H · Space + drag</dd><dt>Zoom / 100%</dt><dd>+ or − / 0</dd><dt>Fit desktop / selection</dt><dd>Shift 1 / Shift 2</dd><dt>Order</dt><dd>Ctrl [ / ]</dd><dt>Exit clean preview</dt><dd>Escape</dd></dl></dialog>
-<dialog id="pair-dialog"><div class="dialog-heading"><h2>Connect Ricing Town Helper</h2><button id="close-pair">×</button></div><p>Run <code>npm run helper</code> in the project folder, then enter the six-digit code printed in the terminal. The secret remains in this browser session and is never saved in the project.</p><label>Pairing code<input id="pair-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code"></label><button id="pair-now">Pair and connect</button><p id="pair-error" class="error-text" role="alert"></p></dialog>
-<dialog id="export-dialog"><div class="dialog-heading"><h2>Export configuration</h2><button id="close-export">×</button></div><button id="inspect-compatibility">Inspect compatibility</button><div id="export-report"></div><button id="stage-hyprland">Prepare for local Hyprland</button><button id="download-full-rice">Download Full Rice</button><button id="download-hybrid">Download Hybrid package</button><button id="download-package">Download Quickshell package</button><button id="download-waybar">Download Waybar package</button></dialog>
-<dialog id="compatibility-dialog"><div class="dialog-heading"><h2>Compatibility Inspector</h2><button id="close-compatibility">×</button></div><p>Native elements export to Waybar. Free-positioned and custom elements remain in Quickshell. Approximations are listed before download.</p><div id="compatibility-summary"></div><div id="compatibility-list"></div></dialog>
-<dialog id="assets-dialog"><div class="dialog-heading"><h2>Asset Manager</h2><button id="close-assets">×</button></div><p>Import a local icon or cursor theme folder. Files are checked, hashed and stored in the project; add its license and source before sharing.</p><label>Pack type<select id="asset-kind"><option value="icons">Icons</option><option value="cursors">Cursors</option></select></label><label>License<input id="asset-license" maxlength="200" placeholder="e.g. GPL-3.0"></label><label>Source<input id="asset-source" maxlength="500" placeholder="https://..."></label><label>Theme folder<input id="asset-folder" type="file" webkitdirectory multiple></label><button id="import-asset-pack">Import checked folder</button><div id="asset-pack-list"></div></dialog>
-<dialog id="waybar-dialog"><div class="dialog-heading"><h2>Import Waybar</h2><button id="close-waybar">×</button></div><p>Select a JSON/JSONC configuration. CSS is optional. Commands and scripts are retained only as disabled metadata and are never executed.</p><label>Waybar config<input id="waybar-config" type="file" accept=".json,.jsonc,application/json"></label><label>GTK CSS (optional)<input id="waybar-css" type="file" accept=".css,text/css"></label><button id="import-waybar-now">Inspect and import</button><div id="waybar-report"></div></dialog>
+<dialog id="shortcut-dialog"><div class="dialog-heading"><h2>Editor shortcuts</h2><button id="close-shortcuts" aria-label="Close shortcuts">×</button></div><p>Use ⌘ instead of Ctrl on macOS. Text fields keep native shortcuts.</p><dl><dt>Undo / Redo</dt><dd>Ctrl Z / Ctrl Shift Z</dd><dt>Copy / Cut / Paste</dt><dd>Ctrl C / X / V</dd><dt>Duplicate / Select all</dt><dd>Ctrl D / Ctrl A</dd><dt>Save / Open</dt><dd>Ctrl S / O</dd><dt>Search components</dt><dd>Ctrl K</dd><dt>Nudge</dt><dd>Arrows · Shift = 10px</dd><dt>Delete / Deselect</dt><dd>Delete / Escape</dd><dt>Select / Pan</dt><dd>V / H · Space + drag</dd><dt>Zoom / 100%</dt><dd>+ or − / 0</dd><dt>Fit desktop / selection</dt><dd>Shift 1 / Shift 2</dd><dt>Order</dt><dd>Ctrl [ / ]</dd><dt>Exit clean preview</dt><dd>Escape</dd></dl></dialog>
+<dialog id="pair-dialog"><div class="dialog-heading"><h2>Connect Ricing Town Helper</h2><button id="close-pair" aria-label="Close pair dialog">×</button></div><p>Run <code>npm run helper</code> in the project folder, then enter the six-digit code printed in the terminal. The secret remains in this browser session and is never saved in the project.</p><label>Pairing code<input id="pair-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code"></label><button id="pair-now" class="btn-primary">Pair and connect</button><p id="pair-error" class="error-text" role="alert"></p></dialog>
+<dialog id="export-dialog"><div class="dialog-heading"><h2>Export configuration</h2><button id="close-export" aria-label="Close export dialog">×</button></div><button id="inspect-compatibility">Inspect compatibility</button><div id="export-report"></div><button id="stage-hyprland">Prepare for local Hyprland</button><button id="download-full-rice">Download Full Rice</button><button id="download-hybrid">Download Hybrid package</button><button id="download-package">Download Quickshell package</button><button id="download-waybar">Download Waybar package</button></dialog>
+<dialog id="compatibility-dialog"><div class="dialog-heading"><h2>Compatibility Inspector</h2><button id="close-compatibility" aria-label="Close compatibility dialog">×</button></div><p>Native elements export to Waybar. Free-positioned and custom elements remain in Quickshell. Approximations are listed before download.</p><div id="compatibility-summary"></div><div id="compatibility-list"></div></dialog>
+<dialog id="assets-dialog"><div class="dialog-heading"><h2>Asset Manager</h2><button id="close-assets" aria-label="Close assets dialog">×</button></div><p>Import a local icon or cursor theme folder. Files are checked, hashed and stored in the project; add its license and source before sharing.</p><label>Pack type<select id="asset-kind"><option value="icons">Icons</option><option value="cursors">Cursors</option></select></label><label>License<input id="asset-license" maxlength="200" placeholder="e.g. GPL-3.0"></label><label>Source<input id="asset-source" maxlength="500" placeholder="https://..."></label><label>Theme folder<input id="asset-folder" type="file" webkitdirectory multiple></label><button id="import-asset-pack" class="btn-primary">Import checked folder</button><div id="asset-pack-list"></div></dialog>
+<dialog id="waybar-dialog"><div class="dialog-heading"><h2>Import Waybar</h2><button id="close-waybar" aria-label="Close Waybar dialog">×</button></div><p>Select a JSON/JSONC configuration. CSS is optional. Commands and scripts are retained only as disabled metadata and are never executed.</p><label>Waybar config<input id="waybar-config" type="file" accept=".json,.jsonc,application/json"></label><label>GTK CSS (optional)<input id="waybar-css" type="file" accept=".css,text/css"></label><button id="import-waybar-now" class="btn-primary">Inspect and import</button><div id="waybar-report"></div></dialog>
 <dialog id="neighborhood-dialog"><div class="dialog-heading"><h2>Widget Neighborhood</h2><button id="close-neighborhood">×</button></div><p>Create a widget visually, then edit its text, data source, shape, animation, colors and children in the Properties panel. Live exports use available system data and show unavailable values honestly.</p><div id="neighborhood-grid" class="neighborhood-grid"></div><h3>Complete desktop starters</h3><p>Opening a starter keeps the current project as the recovery copy.</p><div id="desktop-preset-grid" class="neighborhood-grid"></div></dialog>
-<input id="file" type="file" accept=".rce,.json" hidden><input id="wallpaper-file" type="file" accept="image/png,image/jpeg,image/webp" hidden><input id="live-wallpaper-file" type="file" accept="video/mp4,video/webm,.mp4,.webm" hidden><input id="font-file" type="file" accept=".ttf,.otf" hidden><input id="svg-file" type="file" accept="image/svg+xml,.svg" hidden><input id="audio-file" type="file" accept="audio/mpeg,audio/ogg,audio/wav,audio/flac,audio/mp4,.mp3,.ogg,.wav,.flac,.m4a" hidden><div id="toast" role="status"></div><script type="module" src="app.js?v=20261020b"></script></body></html>
+<dialog id="confirm-delete-dialog"><div class="dialog-heading"><h2>Delete project?</h2><button id="close-confirm-delete" aria-label="Cancel delete">×</button></div><p id="confirm-delete-message">Are you sure you want to delete this project from your recent list? This cannot be undone.</p><div class="dialog-actions"><button id="cancel-delete-btn">Cancel</button><button id="confirm-delete-btn" class="btn-danger">Delete project</button></div></dialog>
+<input id="file" type="file" accept=".rce,.json" hidden><input id="wallpaper-file" type="file" accept="image/png,image/jpeg,image/webp" hidden><input id="live-wallpaper-file" type="file" accept="video/mp4,video/webm,.mp4,.webm" hidden><input id="font-file" type="file" accept=".ttf,.otf" hidden><input id="svg-file" type="file" accept="image/svg+xml,.svg" hidden><input id="audio-file" type="file" accept="audio/mpeg,audio/ogg,audio/wav,audio/flac,audio/mp4,.mp3,.ogg,.wav,.flac,.m4a" hidden><div id="toast" role="status"></div><script type="module" src="app.js?v=20261023a"></script></body></html>

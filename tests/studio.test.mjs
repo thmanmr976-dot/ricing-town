@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {fresh,element,parse,serialize} from '../dist/model.js';
 import {desktop,changeSize,constrain,arrange,snap} from '../dist/design.js';
-import {ProjectStorage} from '../dist/storage.js';
+import {ProjectStorage,renderThumbnailSvg} from '../dist/storage.js';
 import {buildFiles,exportReport} from '../dist/exporter.js';
 import {zip} from '../dist/zip.js';
 const original=readFileSync(new URL('../Hyprland-Amethyst.original.rce',import.meta.url),'utf8');
@@ -17,3 +17,26 @@ test('storage writes serialize in order, retain recovery and recover corrupt cur
 test('export warns about unsupported and unlinked behavior',()=>{const p=parse(original);assert.ok(exportReport(p).some(s=>s.includes('Unlinked shortcuts')));p.canvas.desktop={...desktop(p),mode:'gradient'};assert.ok(exportReport(p).some(s=>s.includes('Gradient angles')));});
 
 test('live wallpaper survives rce and exports an honest mpvpaper launcher',()=>{const p=fresh();p.canvas.desktop={mode:'live',gradientEnd:'#34204d',angle:135,image:'',video:'data:video/mp4;base64,AQID',videoMuted:true,videoRate:1,fit:'cover',position:'center',showText:false,text:'',textColor:'#ffffff'};const saved=parse(serialize(p)),files=buildFiles(saved,{widget:'Item {}',bridge:'python',audioEngine:'python'});assert.equal(saved.canvas.desktop.mode,'live');assert.deepEqual([...files['live-wallpaper.mp4']],[1,2,3]);assert.match(files['start.sh'],/mpvpaper/);assert.match(files['start.sh'],/Live wallpaper unavailable/);assert.match(files['shell.qml'],/color:"transparent"/);assert.match(files['REQUIREMENTS.md'],/require mpvpaper/);});
+test('start screen project index saves thumbnails, renames, duplicates, opens and deletes entries',async()=>{
+ const values=new Map();
+ globalThis.localStorage={getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,v)};
+ try{
+  const store=new ProjectStorage();
+  const p=fresh();p.name='Neon Test';
+  const entry=await store.saveProjectEntry(p,'proj-1');
+  assert.equal(entry.name,'Neon Test');
+  assert.ok(entry.thumbnail.startsWith('data:image/svg+xml;charset=utf-8,'));
+  assert.equal((await store.listProjects()).length,1);
+  await store.renameProjectEntry('proj-1','Amethyst Renamed');
+  const loaded=await store.openProjectEntry('proj-1');
+  assert.equal(loaded.name,'Amethyst Renamed');
+  const dup=await store.duplicateProjectEntry('proj-1');
+  assert.equal(dup.name,'Amethyst Renamed Copy');
+  assert.equal((await store.listProjects()).length,2);
+  await store.deleteProjectEntry('proj-1');
+  assert.equal((await store.listProjects()).length,1);
+  assert.ok(renderThumbnailSvg(p).includes('svg'));
+ }finally{
+  delete globalThis.localStorage;
+ }
+});
