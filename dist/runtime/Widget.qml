@@ -15,6 +15,26 @@ Rectangle {
     property var motion: config.animation || ({})
     property var timeline: config.timeline || ({})
     property var signalBindings: config.signalBindings || []
+    property var meter: config.meter || ({})
+    property string meterStyle: meter.style || "none"
+    property real meterRatio: { const raw=logicValue(meter.source || "cpu"); if(raw === undefined || raw === null || isNaN(Number(raw))) return 0; const lo=Number(meter.min || 0), hi=Number(meter.max === undefined ? 100 : meter.max); return Math.max(0,Math.min(1,(Number(raw)-lo)/Math.max(.0001,hi-lo))); }
+    Behavior on meterRatio { NumberAnimation { duration: 420; easing.type: Easing.OutCubic } }
+    property var hoverSpec: config.hover || ({})
+    property bool hoverActive: hoverSpec.enabled === true && hoverWatch.hovered
+    property real hoverScale: hoverActive ? Number(hoverSpec.scale || 1.05) : 1
+    property real hoverLift: hoverActive ? Number(hoverSpec.lift || 0) : 0
+    Behavior on hoverScale { NumberAnimation { duration: 170; easing.type: Easing.OutCubic } }
+    Behavior on hoverLift { NumberAnimation { duration: 170; easing.type: Easing.OutCubic } }
+    HoverHandler { id: hoverWatch }
+    property var gradientSpec: style.gradient || ({})
+    property bool useGradient: gradientSpec.enabled === true
+    property color gradientEnd: gradientSpec.end || config.fill
+    property real gradientAngle: ((Number(gradientSpec.angle === undefined ? 90 : gradientSpec.angle) % 180) + 180) % 180
+    property Gradient fillGradient: Gradient {
+        orientation: widget.gradientAngle >= 45 && widget.gradientAngle < 135 ? Gradient.Horizontal : Gradient.Vertical
+        GradientStop { position: 0; color: Qt.rgba(widget.base.r, widget.base.g, widget.base.b, widget.alpha) }
+        GradientStop { position: 1; color: Qt.rgba(widget.gradientEnd.r, widget.gradientEnd.g, widget.gradientEnd.b, widget.alpha) }
+    }
     property real timelineProgress: 0
     property int shownWorkspace: runtime.displayWorkspace > 0 ? runtime.displayWorkspace : 1
     property int activeWorkspace: Number(liveData.workspace || 1)
@@ -28,6 +48,7 @@ Rectangle {
     property real alpha: logicStyle.opacity === undefined ? (style.opacity === undefined ? 1 : style.opacity) : logicStyle.opacity
     property color base: logicStyle.fill || config.fill
     color: Qt.rgba(base.r, base.g, base.b, alpha)
+    gradient: useGradient ? fillGradient : undefined
     radius: custom.shape === "circle" ? Math.min(width,height)/2 : custom.shape === "pill" ? height/2 : config.radius * scaleFactor
     border.width: (style.borderWidth || 0) * scaleFactor
     border.color: style.borderColor || "#cba6f7"
@@ -36,9 +57,9 @@ Rectangle {
     function timelineValue(key, fallback) { const frames=timeline.keyframes || []; if(!timeline.enabled || frames.length<2)return fallback; const p=timelineProgress; let left=frames[0],right=frames[frames.length-1]; for(let i=1;i<frames.length;i++)if(p<=frames[i].at){left=frames[i-1];right=frames[i];break;} const span=Math.max(.0001,right.at-left.at),ratio=Math.max(0,Math.min(1,(p-left.at)/span)); return Number(left[key])+(Number(right[key])-Number(left[key]))*ratio; }
     function bindingValue(target, fallback) { let value=fallback; for(let i=0;i<signalBindings.length;i++){const b=signalBindings[i];if(b.target!==target)continue;const raw=logicValue(b.source);if(raw===undefined||raw===null)continue;const ratio=Math.max(0,Math.min(1,(Number(raw)-Number(b.inputMin))/Math.max(.0001,Number(b.inputMax)-Number(b.inputMin))));value=Number(b.outputMin)+ratio*(Number(b.outputMax)-Number(b.outputMin));} return value; }
     opacity: timelineValue("opacity",1) * bindingValue("opacity",1)
-    transform: [Translate { id: motionOffset }, Translate { x: widget.timelineValue("x",0)+widget.bindingValue("xOffset",0); y:widget.timelineValue("y",0)+widget.bindingValue("yOffset",0) }, Scale { origin.x:widget.width/2; origin.y:widget.height/2; xScale:widget.timelineValue("scale",1)*widget.bindingValue("scale",1); yScale:xScale }, Rotation { origin.x:widget.width/2; origin.y:widget.height/2; angle:widget.timelineValue("rotation",0)+widget.bindingValue("rotation",0) }]
+    transform: [Translate { id: motionOffset }, Translate { x: widget.timelineValue("x",0)+widget.bindingValue("xOffset",0); y:widget.timelineValue("y",0)+widget.bindingValue("yOffset",0)-widget.hoverLift }, Scale { origin.x:widget.width/2; origin.y:widget.height/2; xScale:widget.timelineValue("scale",1)*widget.bindingValue("scale",1)*widget.hoverScale; yScale:xScale }, Rotation { origin.x:widget.width/2; origin.y:widget.height/2; angle:widget.timelineValue("rotation",0)+widget.bindingValue("rotation",0) }]
     property string family: style.fontAsset ? (fontNames[style.fontAsset] || "sans-serif") : (style.font || "sans-serif")
-    function logicValue(source) { const d=liveData, spectrum=d.spectrum || ({}); return ({cpu:d.cpu,memory:d.memory,battery:d.battery,network:d.network === true || String(d.network || "").toLowerCase().indexOf("connected") >= 0,musicPlaying:String(d.playing || "").toLowerCase() === "playing" || d.playing === true,charging:["charging","full"].indexOf(String(d.charging || "").toLowerCase()) >= 0,spectrumBass:spectrum.bass,spectrumMid:spectrum.mid,spectrumTreble:spectrum.treble,spectrumBeat:spectrum.beat})[source]; }
+    function logicValue(source) { const d=liveData, spectrum=d.spectrum || ({}); return ({cpu:d.cpu,memory:d.memory,battery:d.battery,volume:d.volume,brightness:d.brightness,temperature:d.temperature,disk:d.disk,gpu:d.gpu,workspace:Number(d.workspace || shownWorkspace),network:d.network === true || String(d.network || "").toLowerCase().indexOf("connected") >= 0,musicPlaying:String(d.playing || "").toLowerCase() === "playing" || d.playing === true,charging:["charging","full"].indexOf(String(d.charging || "").toLowerCase()) >= 0,spectrumBass:spectrum.bass,spectrumMid:spectrum.mid,spectrumTreble:spectrum.treble,spectrumBeat:spectrum.beat})[source]; }
     function ruleMatches(rule) { if(!rule.enabled) return false; const a=logicValue(rule.source), b=rule.value; if(a === undefined || a === null) return false; if(rule.operator === "lt") return Number(a)<Number(b); if(rule.operator === "lte") return Number(a)<=Number(b); if(rule.operator === "eq") return String(a)===String(b); if(rule.operator === "neq") return String(a)!==String(b); if(rule.operator === "gte") return Number(a)>=Number(b); if(rule.operator === "gt") return Number(a)>Number(b); return false; }
     function findLogic() { const rules=config.logic || []; for(let i=0;i<rules.length;i++) if(ruleMatches(rules[i])) return rules[i]; return null; }
     function displayText(baseText) { return logicStyle.text ? String(logicStyle.text).replace(/\{\{value\}\}/g,baseText) : baseText; }
@@ -75,8 +96,17 @@ Rectangle {
         else if(source === "battery") v=value(liveData.battery,"% battery");
         else if(source === "music") v=liveData.title || "No media player";
         else if(source === "network") v=liveData.network || "Network unavailable";
+        else if(source === "volume") v=liveData.volume == null ? "Audio unavailable" : (liveData.muted ? "Muted" : liveData.volume + "%");
+        else if(source === "brightness") v=value(liveData.brightness,"%");
+        else if(source === "temperature") v=value(liveData.temperature,"°C");
+        else if(source === "disk") v=value(liveData.disk,"% disk");
+        else if(source === "gpu") v=value(liveData.gpu,"% GPU");
+        else if(source === "uptime") v=liveData.uptime || "Uptime unavailable";
+        else if(source === "workspace") v=String(shownWorkspace);
+        const raw=source === "workspace" ? shownWorkspace : logicValue(source);
+        const numberText=raw === undefined || raw === null || isNaN(Number(raw)) ? "–" : String(Math.round(Number(raw)));
         const output=template === "" ? "" : (template || "{{value}}");
-        return output.replace(/\{\{value\}\}/g,v).replace(/\{\{time\}\}/g,Qt.formatDateTime(runtime.now,"HH:mm")).replace(/\{\{date\}\}/g,Qt.formatDateTime(runtime.now,"d MMM"));
+        return output.replace(/\{\{value\}\}/g,v).replace(/\{\{number\}\}/g,numberText).replace(/\{\{time\}\}/g,Qt.formatDateTime(runtime.now,"HH:mm")).replace(/\{\{date\}\}/g,Qt.formatDateTime(runtime.now,"d MMM"));
     }
     property bool workspaceParticipant: (config.workspaceContent || []).length > 0 || config.workspaceOnly > 0 || config.workspaceHidden > 0
     Connections {
@@ -102,15 +132,38 @@ Rectangle {
     SequentialAnimation on opacity { running: widget.motion.enabled && !widget.timeline.enabled && widget.effectiveMotion === "fade"; loops:widget.motion.iteration === "once" ? 1 : Animation.Infinite; NumberAnimation { to:.35; duration:(widget.motion.duration || 1200)/2 } NumberAnimation { to:1; duration:(widget.motion.duration || 1200)/2 } }
     SequentialAnimation { running: widget.motion.enabled && widget.effectiveMotion === "float"; loops:widget.motion.iteration === "once" ? 1 : Animation.Infinite; NumberAnimation { target:motionOffset; property:"y"; to:-12; duration:(widget.motion.duration || 1200)/2; easing.type:Easing.InOutQuad } NumberAnimation { target:motionOffset; property:"y"; to:0; duration:(widget.motion.duration || 1200)/2; easing.type:Easing.InOutQuad } }
     SequentialAnimation { running: widget.motion.enabled && widget.effectiveMotion === "slide"; loops:widget.motion.iteration === "once" ? 1 : Animation.Infinite; PauseAnimation { duration:widget.motion.delay || 0 } PropertyAction { target:motionOffset; property:"x"; value:-24 } PropertyAction { target:widget; property:"opacity"; value:0 } ParallelAnimation { NumberAnimation { target:motionOffset; property:"x"; to:0; duration:widget.motion.duration || 1200; easing.type:Easing.InOutQuad } NumberAnimation { target:widget; property:"opacity"; to:1; duration:widget.motion.duration || 1200; easing.type:Easing.InOutQuad } } }
+    SequentialAnimation { running: widget.motion.enabled && !widget.timeline.enabled && widget.effectiveMotion === "bounce"; loops:widget.motion.iteration === "once" ? 1 : Animation.Infinite; PauseAnimation { duration:widget.motion.delay || 0 } NumberAnimation { target:motionOffset; property:"y"; to:-18; duration:(widget.motion.duration || 1200)*.35; easing.type:Easing.OutQuad } NumberAnimation { target:motionOffset; property:"y"; to:0; duration:(widget.motion.duration || 1200)*.65; easing.type:Easing.OutBounce } }
+    SequentialAnimation { running: widget.motion.enabled && !widget.timeline.enabled && widget.effectiveMotion === "shake"; loops:widget.motion.iteration === "once" ? 1 : Animation.Infinite; PauseAnimation { duration:widget.motion.delay || 0 } NumberAnimation { target:motionOffset; property:"x"; to:-7; duration:(widget.motion.duration || 1200)*.1 } NumberAnimation { target:motionOffset; property:"x"; to:7; duration:(widget.motion.duration || 1200)*.15 } NumberAnimation { target:motionOffset; property:"x"; to:-4; duration:(widget.motion.duration || 1200)*.15 } NumberAnimation { target:motionOffset; property:"x"; to:4; duration:(widget.motion.duration || 1200)*.15 } NumberAnimation { target:motionOffset; property:"x"; to:0; duration:(widget.motion.duration || 1200)*.1 } PauseAnimation { duration:(widget.motion.duration || 1200)*.35 } }
+    // Studio-defined actions map to the fixed bridge.py allowlist; nothing here runs project text.
+    function runAction(key) {
+        const all=config.actions || ({}), a=all[key];
+        if (!a || !a.type || a.type === "none") return false;
+        const p=a.params || ({});
+        if (a.type === "launch") runtime.act(String(p.app || ""), "");
+        else if (a.type === "workspace") runtime.act("workspace", String(p.workspace));
+        else if (a.type === "volumeSet") runtime.act("volume", String(p.value));
+        else if (a.type === "volumeStep") runtime.act("volume-step", String(p.delta));
+        else if (a.type === "muteToggle") runtime.act("mute", "");
+        else if (a.type === "media") runtime.act(p.command === "play-pause" ? "play" : String(p.command), "");
+        else if (a.type === "openPanel") runtime.openPanel(p.panel === "calendar" ? "clock" : String(p.panel), config);
+        else if (a.type === "power") runtime.openPanel("power", ({}));
+        else return false;
+        return true;
+    }
     MouseArea {
         anchors.fill: parent
         enabled: widget.config.type !== "workspaces" && widget.config.type !== "music"
-        onClicked: {
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape: (widget.config.actions && (widget.config.actions.click || widget.config.actions.rightClick)) ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: mouse => {
+            if (widget.runAction(mouse.button === Qt.RightButton ? "rightClick" : "click")) return;
+            if (mouse.button === Qt.RightButton) return;
             if (widget.behavior.click === "none") return;
             if (widget.behavior.click === "mute") runtime.act("mute", "");
             else if (widget.config.type !== "bar" && widget.config.type !== "dock" && widget.config.type !== "visualizer") runtime.openPanel(widget.config.type, widget.config);
         }
         onWheel: event => {
+            if (widget.runAction(event.angleDelta.y > 0 ? "scrollUp" : "scrollDown")) return;
             if (widget.config.type === "volume" && widget.behavior.scroll !== "none") runtime.act("volume-step", String((event.angleDelta.y > 0 ? 1 : -1) * (widget.behavior.volumeStep || 5)));
         }
     }
@@ -118,6 +171,46 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: (widget.opts.padding === undefined ? 4 : widget.opts.padding) * widget.scaleFactor
         clip: true
+        Image {
+            anchors.centerIn: parent
+            visible: !!widget.config.bundledIcon
+            source: widget.config.bundledIcon ? Qt.resolvedUrl(widget.config.bundledIcon) : ""
+            width: widget.config.type === "shape" ? parent.width : (widget.opts.iconSize || 18) * widget.scaleFactor
+            height: widget.config.type === "shape" ? parent.height : width
+            sourceSize.width: Math.max(16, width * 2)
+            sourceSize.height: Math.max(16, height * 2)
+            fillMode: Image.PreserveAspectFit
+        }
+        Item {
+            anchors.fill: parent
+            visible: widget.meterStyle === "bar"
+            Rectangle { anchors.left: parent.left; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; height: Math.max(2, (widget.meter.thickness || 8) * widget.scaleFactor); radius: height/2; color: widget.meter.track || "#ffffff"; opacity: .25 }
+            Rectangle { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; width: parent.width * widget.meterRatio; height: Math.max(2, (widget.meter.thickness || 8) * widget.scaleFactor); radius: height/2; color: widget.meter.color || widget.config.color }
+        }
+        Item {
+            anchors.fill: parent
+            visible: widget.meterStyle === "vbar"
+            Rectangle { anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; width: Math.max(2, (widget.meter.thickness || 8) * widget.scaleFactor); radius: width/2; color: widget.meter.track || "#ffffff"; opacity: .25 }
+            Rectangle { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; height: parent.height * widget.meterRatio; width: Math.max(2, (widget.meter.thickness || 8) * widget.scaleFactor); radius: width/2; color: widget.meter.color || widget.config.color }
+        }
+        Canvas {
+            id: meterRing
+            anchors.centerIn: parent
+            width: Math.min(parent.width, parent.height)
+            height: width
+            visible: widget.meterStyle === "ring"
+            property real ratio: widget.meterRatio
+            onRatioChanged: requestPaint()
+            onVisibleChanged: requestPaint()
+            onWidthChanged: requestPaint()
+            Component.onCompleted: requestPaint()
+            onPaint: {
+                const ctx=getContext("2d"), t=Math.max(2,(widget.meter.thickness || 8)*widget.scaleFactor), r=Math.max(1,width/2-t/2);
+                ctx.reset(); ctx.lineWidth=t; ctx.lineCap="round";
+                ctx.globalAlpha=.25; ctx.strokeStyle=String(widget.meter.track || "#ffffff"); ctx.beginPath(); ctx.arc(width/2,height/2,r,0,Math.PI*2); ctx.stroke();
+                ctx.globalAlpha=1; ctx.strokeStyle=String(widget.meter.color || widget.config.color); ctx.beginPath(); ctx.arc(width/2,height/2,r,-Math.PI/2,-Math.PI/2+Math.PI*2*ratio); ctx.stroke();
+            }
+        }
         Text {
             anchors.centerIn: parent
             visible: ["workspaces","bar","dock","widget","text","shape","memoryChart","visualizer","music"].indexOf(widget.config.type) < 0

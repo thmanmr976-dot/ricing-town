@@ -8,7 +8,107 @@ import {APPS} from './catalog.js';
 
 const luaString=value=>JSON.stringify(String(value));
 const rgb=hex=>'0xff'+hex.slice(1).toLowerCase();
+const activeBorderLua=h=>h.borderGradient?luaString(`${rgb(h.activeBorder)} ${rgb(h.activeBorderEnd||'#bb9af7')} ${Math.round(h.borderAngle??45)}deg`):rgb(h.activeBorder);
+const activeBorderLegacy=h=>h.borderGradient?`rgb(${h.activeBorder.slice(1)}) rgb(${(h.activeBorderEnd||'#bb9af7').slice(1)}) ${Math.round(h.borderAngle??45)}deg`:`rgb(${h.activeBorder.slice(1)})`;
 const shellCommand=p=>{const base=p.integrations.shell==='waybar'?'waybar -c ~/.config/ricing-town/config/waybar/config.jsonc -s ~/.config/ricing-town/config/waybar/style.css':p.integrations.shell==='hybrid'?'sh ~/.config/ricing-town/config/hybrid/start.sh':'sh ~/.config/ricing-town/config/quickshell/start.sh';return p.integrations.shell==='waybar'&&desktop(p).mode==='live'?'sh ~/.config/ricing-town/config/live-wallpaper/start.sh & '+base:base;};
+
+export const MOCK_WINDOWS=[
+ {id:'win-terminal',class:'kitty',title:'kitty — ~/ricing-town',app:'Terminal',icon:'⌘',kind:'terminal'},
+ {id:'win-editor',class:'nvim',title:'ricing-town.lua — Neovim',app:'Code',icon:'◈',kind:'code'},
+ {id:'win-files',class:'thunar',title:'~/.config/ricing-town — Thunar',app:'Files',icon:'▣',kind:'files'},
+ {id:'win-browser',class:'firefox',title:'Hyprland Wiki — Mozilla Firefox',app:'Browser',icon:'◎',kind:'browser'}
+];
+
+function matchRuleClass(pattern,target){
+ if(!pattern)return false;
+ const clean=String(pattern).trim();
+ if(!clean)return false;
+ if(clean.toLowerCase()===target.toLowerCase())return true;
+ try{return new RegExp(clean,'i').test(target);}catch{return target.toLowerCase().includes(clean.toLowerCase());}
+}
+
+export function computeTilingLayout(project,{count,focusedIndex,activeWorkspace=1}={}){
+ const p=validate(project),h=p.hyprland;
+ const total=Math.max(1,Math.min(4,Number.isInteger(count)?count:(h.windowCount??3)));
+ const focus=Math.max(0,Math.min(total-1,Number.isInteger(focusedIndex)?focusedIndex:(h.focusedWindow??0)));
+ const insets={top:0,right:0,bottom:0,left:0};
+ const activeMonitor=p.canvas.activeMonitorId||'primary';
+ for(const e of p.elements){
+  if(e.parentId||!['bar','dock'].includes(e.type))continue;
+  if(e.monitorId&&e.monitorId!=='all'&&e.monitorId!==activeMonitor)continue;
+  if((e.workspaceOnly||0)>0&&e.workspaceOnly!==activeWorkspace)continue;
+  if((e.workspaceHidden||0)===activeWorkspace)continue;
+  if((e.reveal?.mode||'always')!=='always')continue;
+  const pageX=e.workspaceLayout?.[activeWorkspace-1]?.x??e.x;
+  if(e.width>=e.height){
+   const cy=e.y+e.height/2;
+   if(cy<=p.canvas.height*0.35)insets.top=Math.max(insets.top,Math.min(Math.round(p.canvas.height*0.35),Math.round(e.y+e.height)));
+   else if(cy>=p.canvas.height*0.65)insets.bottom=Math.max(insets.bottom,Math.min(Math.round(p.canvas.height*0.35),Math.round(p.canvas.height-e.y)));
+  }else{
+   const cx=pageX+e.width/2;
+   if(cx<=p.canvas.width*0.35)insets.left=Math.max(insets.left,Math.min(Math.round(p.canvas.width*0.35),Math.round(pageX+e.width)));
+   else if(cx>=p.canvas.width*0.65)insets.right=Math.max(insets.right,Math.min(Math.round(p.canvas.width*0.35),Math.round(p.canvas.width-pageX)));
+  }
+ }
+ const x=insets.left+h.gapsOut,y=insets.top+h.gapsOut;
+ const width=Math.max(120,p.canvas.width-insets.left-insets.right-h.gapsOut*2);
+ const height=Math.max(80,p.canvas.height-insets.top-insets.bottom-h.gapsOut*2);
+ const windows=MOCK_WINDOWS.slice(0,total).map((base,index)=>{
+  const matched=(p.automation?.windowRules||[]).filter(r=>matchRuleClass(r.class,base.class));
+  const floating=matched.some(r=>r.float);
+  const centered=matched.some(r=>r.center);
+  const ruleWorkspace=matched.find(r=>r.workspace)?.workspace||'';
+  return {...base,index,focused:index===focus,floating,centered,ruleWorkspace,x,y,width,height};
+ });
+ const tiled=windows.filter(w=>!w.floating),floating=windows.filter(w=>w.floating);
+ const splitGap=h.gapsIn*2;
+ const ratio=h.splitRatio??(h.layout==='master'?0.55:h.layout==='scrolling'?0.62:0.52);
+ if(tiled.length===1){
+  Object.assign(tiled[0],{x,y,width,height});
+ }else if(tiled.length>1&&h.layout==='master'){
+  const masterW=Math.max(80,Math.round((width-splitGap)*ratio));
+  const stackW=Math.max(80,width-masterW-splitGap),stackX=x+masterW+splitGap;
+  Object.assign(tiled[0],{x,y,width:masterW,height});
+  const stackCount=tiled.length-1,totalGap=splitGap*(stackCount-1),itemH=Math.max(40,Math.floor((height-totalGap)/stackCount));
+  for(let s=0;s<stackCount;s++){
+   const sy=y+s*(itemH+splitGap),sh=s===stackCount-1?Math.max(40,y+height-sy):itemH;
+   Object.assign(tiled[s+1],{x:stackX,y:sy,width:stackW,height:sh});
+  }
+ }else if(tiled.length>1&&h.layout==='scrolling'){
+  const colW=Math.max(120,Math.round(width*ratio));
+  const focusedTiled=Math.max(0,tiled.findIndex(w=>w.focused));
+  const focusX=focusedTiled===0?x:focusedTiled===tiled.length-1?x+width-colW:x+Math.round((width-colW)/2);
+  for(let i=0;i<tiled.length;i++){
+   const rawX=focusX+(i-focusedTiled)*(colW+splitGap);
+   const left=Math.max(x,Math.min(x+width-80,rawX));
+   const right=Math.min(x+width,Math.max(left+80,rawX+colW));
+   Object.assign(tiled[i],{x:left,y,width:right-left,height});
+  }
+ }else if(tiled.length>1){
+  let box={x,y,width,height};
+  for(let i=0;i<tiled.length;i++){
+   if(i===tiled.length-1){Object.assign(tiled[i],box);break;}
+   if(i%2===0){
+    const r=i===0?ratio:0.5;
+    const w1=Math.max(60,Math.round((box.width-splitGap)*r));
+    Object.assign(tiled[i],{x:box.x,y:box.y,width:w1,height:box.height});
+    box={x:box.x+w1+splitGap,y:box.y,width:Math.max(60,box.width-w1-splitGap),height:box.height};
+   }else{
+    const h1=Math.max(50,Math.round((box.height-splitGap)*0.5));
+    Object.assign(tiled[i],{x:box.x,y:box.y,width:box.width,height:h1});
+    box={x:box.x,y:box.y+h1+splitGap,width:box.width,height:Math.max(50,box.height-h1-splitGap)};
+   }
+  }
+ }
+ for(let i=0;i<floating.length;i++){
+  const fw=Math.min(width,Math.max(220,Math.round(width*0.48)));
+  const fh=Math.min(height,Math.max(150,Math.round(height*0.52)));
+  const fx=floating[i].centered?x+Math.round((width-fw)/2):Math.min(x+width-fw,x+Math.round(width*0.26)+i*34);
+  const fy=floating[i].centered?y+Math.round((height-fh)/2):Math.min(y+height-fh,y+Math.round(height*0.18)+i*28);
+  Object.assign(floating[i],{x:fx,y:fy,width:fw,height:fh});
+ }
+ return {insets,usable:{x,y,width,height},layout:h.layout,gapsIn:h.gapsIn,gapsOut:h.gapsOut,splitRatio:ratio,windows};
+}
 
 export function hyprlandLua(project){const p=validate(project),h=p.hyprland;
  const monitorLua=p.monitors.map(m=>`hl.monitor({ output = ${luaString(m.output)}, mode = ${luaString(m.mode)}, position = ${luaString(m.position)}, scale = ${m.scale} })`).join('\n');
@@ -18,7 +118,7 @@ export function hyprlandLua(project){const p=validate(project),h=p.hyprland;
 -- Review this file before loading it. It contains appearance/input/monitor settings only.
 ${monitorLua}
 hl.config({
-  general = { gaps_in = ${h.gapsIn}, gaps_out = ${h.gapsOut}, border_size = ${h.borderSize}, col = { active_border = ${rgb(h.activeBorder)}, inactive_border = ${rgb(h.inactiveBorder)} }, layout = ${luaString(h.layout)} },
+  general = { gaps_in = ${h.gapsIn}, gaps_out = ${h.gapsOut}, border_size = ${h.borderSize}, col = { active_border = ${activeBorderLua(h)}, inactive_border = ${rgb(h.inactiveBorder)} }, layout = ${luaString(h.layout)} },
   decoration = { rounding = ${h.rounding}, active_opacity = ${h.activeOpacity}, inactive_opacity = ${h.inactiveOpacity},
     blur = { enabled = ${h.blurEnabled}, size = ${h.blurSize}, passes = ${h.blurPasses} },
     shadow = { enabled = ${h.shadowEnabled}, range = ${h.shadowRange}, color = ${rgb(h.shadowColor)} }
@@ -40,7 +140,7 @@ export function hyprlandLegacy(project){const p=validate(project),h=p.hyprland;
  const automationLegacy=[...p.automation.keybindings.map(b=>{const parts=b.keys.split('+').map(x=>x.trim()),key=parts.pop(),mods=parts.join(' ');return `bind = ${mods}, ${key}, exec, ${APPS[b.actionId].command.join(' ')}`;}),...p.automation.windowRules.filter(r=>r.float||r.center||r.workspace).map(r=>`windowrulev2 = ${[r.float?'float':'',r.center?'center':'',r.workspace?'workspace '+r.workspace:''].filter(Boolean).join(', ')}, class:^(${r.class})$`),...p.automation.workspaceRules.map(r=>`workspace = ${r.workspace}${r.monitor?', monitor:'+r.monitor:''}${r.persistent?', persistent:true':''}`)].join('\n');
  return `# Ricing Town compatibility fragment for Hyprland 0.54 and older
 ${monitorLegacy}
-general { gaps_in = ${h.gapsIn}; gaps_out = ${h.gapsOut}; border_size = ${h.borderSize}; col.active_border = rgb(${h.activeBorder.slice(1)}); col.inactive_border = rgb(${h.inactiveBorder.slice(1)}); layout = ${h.layout} }
+general { gaps_in = ${h.gapsIn}; gaps_out = ${h.gapsOut}; border_size = ${h.borderSize}; col.active_border = ${activeBorderLegacy(h)}; col.inactive_border = rgb(${h.inactiveBorder.slice(1)}); layout = ${h.layout} }
 decoration { rounding = ${h.rounding}; active_opacity = ${h.activeOpacity}; inactive_opacity = ${h.inactiveOpacity}; blur { enabled = ${h.blurEnabled}; size = ${h.blurSize}; passes = ${h.blurPasses} }; shadow { enabled = ${h.shadowEnabled}; range = ${h.shadowRange}; color = rgb(${h.shadowColor.slice(1)}) } }
 input { kb_layout = ${h.keyboardLayout}; kb_options = ${h.keyboardOptions}; follow_mouse = ${h.followMouse}; touchpad { natural_scroll = ${h.naturalScroll} } }
 animations { enabled = ${h.animations}; animation = global, 1, ${h.animationSpeed}, default, ${h.animationStyle} }
