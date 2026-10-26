@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ricing-town-desktop"
+version = "0.4.0"
+description = "Native Hyprland desktop customization palette"
+requires-python = ">=3.11"
+dependencies = ["PySide6>=6.6"]
+
+[project.scripts]
+ricing-town = "ricing_town.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

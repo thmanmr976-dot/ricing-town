@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Ricing Town
+Comment=Native Hyprland desktop customization palette
+Exec=ricing-town --show
+Icon=preferences-desktop-theme
+Terminal=false
+Categories=Settings;DesktopSettings;
+StartupWMClass=io.ricingtown.Desktop
+

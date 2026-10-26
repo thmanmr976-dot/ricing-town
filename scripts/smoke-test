@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -eu
+project_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+runner="$project_dir/scripts/ricing-town"
+runtime_dir="$(mktemp -d)"
+state_dir="$(mktemp -d)"
+cleanup() {
+  "$runner" --quit >/dev/null 2>&1 || true
+  if test -n "${app_pid:-}" && kill -0 "$app_pid" 2>/dev/null; then
+    kill "$app_pid" 2>/dev/null || true
+    wait "$app_pid" 2>/dev/null || true
+  fi
+  rm -f "$runtime_dir/ricing-town-desktop.sock"
+  rmdir "$runtime_dir" "$state_dir" 2>/dev/null || true
+}
+trap cleanup EXIT
+export XDG_RUNTIME_DIR="$runtime_dir"
+export XDG_STATE_HOME="$state_dir"
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+"$runner" --show >/tmp/ricing-town-smoke.log 2>&1 &
+app_pid=$!
+ready=false
+for unused in $(seq 1 40); do
+  if "$runner" --hide >/dev/null 2>&1; then ready=true; break; fi
+  sleep 0.05
+done
+test "$ready" = true
+"$runner" --show
+"$runner" --toggle
+"$runner" --toggle
+"$runner" --quit
+wait "$app_pid"
+echo "IPC smoke test passed: show/hide/toggle/quit, one controller PID $app_pid"
